@@ -1,10 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <title>反派电影人格测试</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>反派电影人格测试</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
-<body style="display:flex;justify-content:center;align-items:center;height:100vh;font-size:24px;">
-    反派电影人格测试 Demo
+<body>
+  <main class="app">
+
+    <section id="homePage" class="screen active">
+      <div class="meta"><span>PERSONALITY FILM</span><span>NO.01</span></div>
+      <h1>反派电影<br>人格测试</h1>
+      <p class="subtitle">当你不再讨好世界，故事会把你推向哪一种反派？</p>
+      <button id="startBtn" class="btn light">开始放映</button>
+    </section>
+
+    <section id="introPage" class="screen">
+      <div class="file-title">电影档案</div>
+      <div class="file-subtitle">MOVIE FILE</div>
+      <div class="file-list">
+        <div><span>影片编号</span><strong>NO.024</strong></div>
+        <div><span>片长</span><strong>约 3 分钟</strong></div>
+        <div><span>主演</span><strong>你自己</strong></div>
+      </div>
+      <p class="subtitle">请根据第一直觉作答。没有标准答案，只有你的真实选择。</p>
+      <button id="enterBtn" class="btn red">进入第一幕</button>
+    </section>
+
+    <section id="questionPage" class="screen">
+      <div class="question-top">
+        <span id="sceneText">第一幕</span>
+        <span id="countText">1 / 3</span>
+      </div>
+      <div class="progress"><div id="progressBar"></div></div>
+      <h2 id="questionText"></h2>
+      <div id="options" class="options"></div>
+    </section>
+
+    <section id="resultPage" class="screen">
+      <div class="result-label">你的反派人格是</div>
+      <h2 id="resultName"></h2>
+      <p id="resultDesc" class="result-desc"></p>
+      <button id="restartBtn" class="btn red">重新测试</button>
+    </section>
+
+  </main>
+
+  <script src="data/questions.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
