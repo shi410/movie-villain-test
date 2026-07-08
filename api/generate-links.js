@@ -44,9 +44,7 @@ export default async function handler(req, res) {
 
   const data = await response.json();
 
-  const host = req.headers.host;
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const baseUrl = `${protocol}://${host}`;
+  const baseUrl = "https://filmtest.top";
 
   const links = data.map(item => `${baseUrl}/?token=${item.token}`);
 
