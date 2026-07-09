@@ -16,7 +16,6 @@ const resultPage = document.getElementById("resultPage");
 
 const startBtn = document.getElementById("startBtn");
 const enterBtn = document.getElementById("enterBtn");
-const restartBtn = document.getElementById("restartBtn");
 
 const questionText = document.getElementById("questionText");
 const options = document.getElementById("options");
@@ -148,10 +147,6 @@ enterBtn.onclick = () => {
 
   loadQuestion();
   showPage(questionPage);
-};
-
-restartBtn.onclick = () => {
-  showError("该链接已完成测试，不支持重复测试。");
 };
 
 validateToken();
