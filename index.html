@@ -38,15 +38,49 @@
       <div id="options" class="options"></div>
     </section>
 
-    <section id="resultPage" class="screen">
-      <div class="result-label">你的反派人格是</div>
-      <h2 id="resultName"></h2>
-      <p id="resultDesc" class="result-desc"></p>
-    </section>
+<section id="resultPage" class="screen result-screen">
+  <div class="result-hero">
+    <div class="result-meta">
+      <span id="resultNumber"></span>
+      <span id="resultSource"></span>
+    </div>
+
+    <div class="result-label">你的反派人格是</div>
+    <h2 id="resultTitle"></h2>
+    <div id="resultRole" class="result-role"></div>
+    <p id="resultQuote" class="result-quote"></p>
+  </div>
+
+  <div id="resultKeywords" class="keyword-list"></div>
+
+  <section class="report-block">
+    <h3>人格判词</h3>
+    <div id="resultVerdict" class="report-text"></div>
+  </section>
+
+  <section class="report-block">
+    <h3>人格维度</h3>
+    <div id="resultDimensions" class="dimension-list"></div>
+  </section>
+
+  <div id="resultSections"></div>
+
+  <section class="report-block">
+    <h3>相似角色</h3>
+    <div id="resultSimilar" class="similar-list"></div>
+  </section>
+
+  <section class="hidden-line">
+    <span>隐藏台词</span>
+    <p id="resultHiddenLine"></p>
+  </section>
+</section>
 
   </main>
 
   <script src="data/questions.js"></script>
+  <script src="data/personalities/homelander.js"></script>
+  <script src="data/results.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
