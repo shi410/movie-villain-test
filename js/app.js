@@ -22,8 +22,17 @@ const options = document.getElementById("options");
 const progressBar = document.getElementById("progressBar");
 const countText = document.getElementById("countText");
 
-const resultName = document.getElementById("resultName");
-const resultDesc = document.getElementById("resultDesc");
+const resultNumber = document.getElementById("resultNumber");
+const resultSource = document.getElementById("resultSource");
+const resultTitle = document.getElementById("resultTitle");
+const resultRole = document.getElementById("resultRole");
+const resultQuote = document.getElementById("resultQuote");
+const resultKeywords = document.getElementById("resultKeywords");
+const resultVerdict = document.getElementById("resultVerdict");
+const resultDimensions = document.getElementById("resultDimensions");
+const resultSections = document.getElementById("resultSections");
+const resultSimilar = document.getElementById("resultSimilar");
+const resultHiddenLine = document.getElementById("resultHiddenLine");
 
 function showPage(page) {
   document.querySelectorAll(".screen").forEach(screen => {
@@ -114,6 +123,58 @@ async function markTokenUsed() {
   tokenUsed = true;
 }
 
+function textToParagraphs(text) {
+  return text
+    .trim()
+    .split(/\n+/)
+    .map(paragraph => `<p>${paragraph}</p>`)
+    .join("");
+}
+
+function renderResult(personality) {
+  resultNumber.textContent = `NO.${personality.number}`;
+  resultSource.textContent = personality.source;
+  resultTitle.textContent = personality.title;
+  resultRole.textContent = `${personality.role}｜${personality.actor}`;
+  resultQuote.textContent = personality.quote;
+
+  resultKeywords.innerHTML = personality.keywords
+    .map(keyword => `<span>${keyword}</span>`)
+    .join("");
+
+  resultVerdict.innerHTML = textToParagraphs(personality.verdict);
+
+  resultDimensions.innerHTML = personality.dimensions
+    .map(([name, value, desc]) => `
+      <div class="dimension-item">
+        <div class="dimension-head">
+          <span>${name}</span>
+          <strong>${value}</strong>
+        </div>
+        <div class="dimension-track">
+          <div style="width: ${value}%"></div>
+        </div>
+        <p>${desc}</p>
+      </div>
+    `)
+    .join("");
+
+  resultSections.innerHTML = personality.sections
+    .map(section => `
+      <section class="report-block">
+        <h3>${section.title}</h3>
+        <div class="report-text">${textToParagraphs(section.content)}</div>
+      </section>
+    `)
+    .join("");
+
+  resultSimilar.innerHTML = personality.similar
+    .map(item => `<span>${item}</span>`)
+    .join("");
+
+  resultHiddenLine.textContent = personality.hiddenLine;
+}
+
 async function showResult() {
   let maxType = "joker";
   let maxScore = -1;
@@ -125,8 +186,7 @@ async function showResult() {
     }
   }
 
-  resultName.textContent = results[maxType].name;
-  resultDesc.textContent = results[maxType].desc;
+  renderResult(results[maxType]);
 
   await markTokenUsed();
 
