@@ -27,6 +27,7 @@ const resultSource = document.getElementById("resultSource");
 const resultTitle = document.getElementById("resultTitle");
 const resultRole = document.getElementById("resultRole");
 const resultQuote = document.getElementById("resultQuote");
+const resultImage = document.getElementById("resultImage");
 const resultKeywords = document.getElementById("resultKeywords");
 const resultVerdict = document.getElementById("resultVerdict");
 const resultDimensions = document.getElementById("resultDimensions");
@@ -218,6 +219,13 @@ function renderResult(personality) {
   resultTitle.textContent = personality.title;
   resultRole.textContent = `${personality.role}｜${personality.actor}`;
   resultQuote.textContent = personality.quote;
+  if (personality.image) {
+    resultImage.src = personality.image;
+    resultImage.alt = personality.role;
+    resultImage.style.display = "block";
+  } else {
+    resultImage.style.display = "none";
+  }
 
   resultKeywords.innerHTML = personality.keywords
     .map(keyword => `<span>${keyword}</span>`)
