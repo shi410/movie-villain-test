@@ -26,6 +26,7 @@ const resultNumber = document.getElementById("resultNumber");
 const resultSource = document.getElementById("resultSource");
 const resultTitle = document.getElementById("resultTitle");
 const resultRole = document.getElementById("resultRole");
+const resultActor = document.getElementById("resultActor");
 const resultQuote = document.getElementById("resultQuote");
 const resultImage = document.getElementById("resultImage");
 const resultKeywords = document.getElementById("resultKeywords");
@@ -217,7 +218,8 @@ function renderResult(personality) {
   resultNumber.textContent = `NO.${personality.number}`;
   resultSource.textContent = personality.source;
   resultTitle.textContent = personality.title;
-  resultRole.textContent = `${personality.role}｜${personality.actor}`;
+  resultRole.textContent = `${personality.role}｜${personality.source}`;
+  resultActor.textContent = `演员：${personality.actor}`;
   resultQuote.textContent = personality.quote;
   if (personality.image) {
     resultImage.src = personality.image;
