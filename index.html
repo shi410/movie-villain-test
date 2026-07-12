@@ -9,11 +9,9 @@
 <body>
   <main class="app">
 
-    <section id="homePage" class="screen active">
-      <div class="meta"><span>PERSONALITY FILM</span><span>NO.01</span></div>
-      <h1>反派电影<br>人格测试</h1>
-      <p class="subtitle">当你不再讨好世界，故事会把你推向哪一种反派？</p>
-      <button id="startBtn" class="btn light">开始放映</button>
+    <section id="homePage" class="screen active home-screen">
+      <img class="home-cover" src="images/home-cover.jpg" alt="反派电影人格测试" />
+      <button id="startBtn" class="btn home-start-btn">开始测试</button>
     </section>
 
     <section id="introPage" class="screen">
@@ -48,10 +46,12 @@
     <div class="result-label">你的反派人格是</div>
     <h2 id="resultTitle"></h2>
     <div id="resultRole" class="result-role"></div>
+    <div id="resultActor" class="result-actor"></div>
     <img id="resultImage" class="result-image" alt="" />
     <p id="resultQuote" class="result-quote"></p>
   </div>
 
+  <div class="keyword-title">反派关键词</div>
   <div id="resultKeywords" class="keyword-list"></div>
 
   <section class="report-block">
