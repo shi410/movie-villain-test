@@ -1,6 +1,7 @@
 let currentQuestion = 0;
 let currentToken = null;
 let tokenUsed = false;
+let currentPersonality = null;
 
 const score = {
   joker: 0,
@@ -12,6 +13,7 @@ const score = {
 const homePage = document.getElementById("homePage");
 const introPage = document.getElementById("introPage");
 const questionPage = document.getElementById("questionPage");
+const loadingPage = document.getElementById("loadingPage");
 const resultPage = document.getElementById("resultPage");
 
 const startBtn = document.getElementById("startBtn");
@@ -31,12 +33,20 @@ const resultQuote = document.getElementById("resultQuote");
 const resultImage = document.getElementById("resultImage");
 const resultKeywords = document.getElementById("resultKeywords");
 const resultVerdict = document.getElementById("resultVerdict");
-const resultDimensions = document.getElementById("resultDimensions");
 const resultRadar = document.getElementById("resultRadar");
+const resultDimensions = document.getElementById("resultDimensions");
 const resultDimensionSummary = document.getElementById("resultDimensionSummary");
 const resultSections = document.getElementById("resultSections");
 const resultSimilar = document.getElementById("resultSimilar");
 const resultHiddenLine = document.getElementById("resultHiddenLine");
+
+const rebateBtn = document.getElementById("rebateBtn");
+const shareBtn = document.getElementById("shareBtn");
+const rebateModal = document.getElementById("rebateModal");
+const shareModal = document.getElementById("shareModal");
+const closeRebateBtn = document.getElementById("closeRebateBtn");
+const closeShareBtn = document.getElementById("closeShareBtn");
+const sharePreview = document.getElementById("sharePreview");
 
 function showPage(page) {
   document.querySelectorAll(".screen").forEach(screen => {
@@ -44,14 +54,23 @@ function showPage(page) {
   });
 
   page.classList.add("active");
+  window.scrollTo(0, 0);
 }
 
 function showError(message) {
   homePage.innerHTML = `
-    <h1>链接不可用</h1>
-    <p class="subtitle">${message}</p>
+    <div class="error-state">
+      <h1>链接不可用</h1>
+      <p class="subtitle">${message}</p>
+    </div>
   `;
   showPage(homePage);
+}
+
+function wait(ms) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms);
+  });
 }
 
 async function validateToken() {
@@ -76,6 +95,10 @@ async function validateToken() {
   }
 }
 
+function getOptionLabel(index) {
+  return ["A", "B", "C", "D"][index] || "";
+}
+
 function loadQuestion() {
   const q = questions[currentQuestion];
 
@@ -85,18 +108,21 @@ function loadQuestion() {
 
   options.innerHTML = "";
 
-  q.options.forEach(option => {
+  q.options.forEach((option, index) => {
     const btn = document.createElement("button");
 
     btn.className = "option";
-    btn.textContent = option.text;
+    btn.innerHTML = `
+      <span class="option-letter">${getOptionLabel(index)}.</span>
+      <span class="option-text">${option.text}</span>
+    `;
 
     btn.onclick = () => {
       score[option.type]++;
       currentQuestion++;
 
       if (currentQuestion >= questions.length) {
-        showResult();
+        showLoadingThenResult();
       } else {
         loadQuestion();
       }
@@ -107,24 +133,30 @@ function loadQuestion() {
 }
 
 async function markTokenUsed() {
-  if (!currentToken || tokenUsed) return;
+  if (!currentToken || tokenUsed) return true;
 
-  const res = await fetch("/api/use-token", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ token: currentToken })
-  });
+  try {
+    const res = await fetch("/api/use-token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ token: currentToken })
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok || !data.success) {
-    showError(data.message || "链接核销失败，请联系客服。");
-    return;
+    if (!res.ok || !data.success) {
+      showError(data.message || "链接核销失败，请联系客服。");
+      return false;
+    }
+
+    tokenUsed = true;
+    return true;
+  } catch (err) {
+    showError("链接核销失败，请联系客服。");
+    return false;
   }
-
-  tokenUsed = true;
 }
 
 function textToParagraphs(text) {
@@ -138,7 +170,7 @@ function textToParagraphs(text) {
 function renderRadarChart(dimensions) {
   const size = 300;
   const center = size / 2;
-  const maxRadius = 92;
+  const maxRadius = 86;
   const levels = 4;
   const count = dimensions.length;
   const angleOffset = -Math.PI / 2;
@@ -190,12 +222,12 @@ function renderRadarChart(dimensions) {
     .map((item, index) => {
       const name = Array.isArray(item) ? item[0] : item.name;
       const value = Array.isArray(item) ? item[1] : item.value;
-      const point = pointAt(index, maxRadius + 28);
+      const point = pointAt(index, maxRadius + 34);
 
       return `
         <text x="${point.x}" y="${point.y}" class="radar-label" text-anchor="middle">
           <tspan x="${point.x}" dy="0">${name}</tspan>
-          <tspan x="${point.x}" dy="16">${value}</tspan>
+          <tspan x="${point.x}" dy="17">${value}</tspan>
         </text>
       `;
     })
@@ -215,12 +247,15 @@ function renderRadarChart(dimensions) {
 }
 
 function renderResult(personality) {
+  currentPersonality = personality;
+
   resultNumber.textContent = `NO.${personality.number}`;
   resultSource.textContent = personality.source;
   resultTitle.textContent = personality.title;
   resultRole.textContent = `${personality.role}｜${personality.source}`;
   resultActor.textContent = `演员：${personality.actor}`;
   resultQuote.textContent = personality.quote;
+
   if (personality.image) {
     resultImage.src = personality.image;
     resultImage.alt = personality.role;
@@ -234,6 +269,7 @@ function renderResult(personality) {
     .join("");
 
   resultVerdict.innerHTML = textToParagraphs(personality.verdict);
+
   renderRadarChart(personality.dimensions);
 
   resultDimensions.innerHTML = personality.dimensions
@@ -250,53 +286,54 @@ function renderResult(personality) {
       </div>
     `)
     .join("");
+
   resultDimensionSummary.innerHTML = personality.dimensionSummary
-  ? textToParagraphs(personality.dimensionSummary)
-  : "";
+    ? textToParagraphs(personality.dimensionSummary)
+    : "";
 
-resultSections.innerHTML = personality.sections
-  .map((section, index) => {
-    const sectionNumber = String(index + 3).padStart(2, "0");
-    const body = section.items
-      ? section.items
-          .map(item => `
-            <div class="report-item">
-              <h4>${item.label}</h4>
-              <div class="report-text">${textToParagraphs(item.content)}</div>
-            </div>
-          `)
-          .join("")
-      : `<div class="report-text">${textToParagraphs(section.content)}</div>`;
+  resultSections.innerHTML = personality.sections
+    .map((section, index) => {
+      const sectionNumber = String(index + 3).padStart(2, "0");
+      const body = section.items
+        ? section.items
+            .map(item => `
+              <div class="report-item">
+                <h4>${item.label}</h4>
+                <div class="report-text">${textToParagraphs(item.content)}</div>
+              </div>
+            `)
+            .join("")
+        : `<div class="report-text">${textToParagraphs(section.content)}</div>`;
 
-    const note = section.note
-      ? `<div class="section-note">${section.note}</div>`
-      : "";
+      const note = section.note
+        ? `<div class="section-note">${section.note}</div>`
+        : "";
 
-    return `
-      <section class="report-block">
-        <div class="section-kicker">${sectionNumber}</div>
-        <h3>${section.title}</h3>
-        ${body}
-        ${note}
-      </section>
-    `;
-  })
-  .join("");
+      return `
+        <section class="report-block">
+          <div class="section-kicker">${sectionNumber}</div>
+          <h3>${section.title}</h3>
+          ${body}
+          ${note}
+        </section>
+      `;
+    })
+    .join("");
 
-resultSimilar.innerHTML = personality.similar
-  .map(item => `
-    <div class="similar-item">
-      <strong>${item.name}</strong>
-      <span>${item.source}</span>
-      <p>${item.desc}</p>
-    </div>
-  `)
-  .join("");
+  resultSimilar.innerHTML = personality.similar
+    .map(item => `
+      <div class="similar-item">
+        <strong>${item.name}</strong>
+        <span>${item.source}</span>
+        <p>${item.desc}</p>
+      </div>
+    `)
+    .join("");
 
   resultHiddenLine.textContent = personality.hiddenLine;
 }
 
-async function showResult() {
+function getResultPersonality() {
   let maxType = "joker";
   let maxScore = -1;
 
@@ -307,11 +344,34 @@ async function showResult() {
     }
   }
 
-  renderResult(results[maxType]);
+  return results[maxType];
+}
 
-  await markTokenUsed();
+async function showLoadingThenResult() {
+  const personality = getResultPersonality();
+
+  showPage(loadingPage);
+
+  renderResult(personality);
+
+  const used = await Promise.all([
+    markTokenUsed(),
+    wait(1000)
+  ]).then(([success]) => success);
+
+  if (!used) return;
 
   showPage(resultPage);
+}
+
+function openModal(modal) {
+  modal.classList.add("active");
+  document.body.classList.add("modal-open");
+}
+
+function closeModal(modal) {
+  modal.classList.remove("active");
+  document.body.classList.remove("modal-open");
 }
 
 startBtn.onclick = () => {
@@ -328,6 +388,36 @@ enterBtn.onclick = () => {
 
   loadQuestion();
   showPage(questionPage);
+};
+
+rebateBtn.onclick = () => {
+  openModal(rebateModal);
+};
+
+shareBtn.onclick = () => {
+  if (!currentPersonality || !currentPersonality.shareImage) {
+    alert("结果长图暂未准备好。");
+    return;
+  }
+
+  sharePreview.src = currentPersonality.shareImage;
+  openModal(shareModal);
+};
+
+closeRebateBtn.onclick = () => {
+  closeModal(rebateModal);
+};
+
+closeShareBtn.onclick = () => {
+  closeModal(shareModal);
+};
+
+rebateModal.querySelector(".modal-backdrop").onclick = () => {
+  closeModal(rebateModal);
+};
+
+shareModal.querySelector(".modal-backdrop").onclick = () => {
+  closeModal(shareModal);
 };
 
 validateToken();

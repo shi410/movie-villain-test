@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>反派电影人格测试</title>
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -14,7 +14,7 @@
       <button id="startBtn" class="btn home-start-btn">开始测试</button>
     </section>
 
-    <section id="introPage" class="screen">
+    <section id="introPage" class="screen intro-screen">
       <div class="file-title">电影档案</div>
       <div class="file-subtitle">MOVIE FILE</div>
       <div class="file-list">
@@ -26,7 +26,7 @@
       <button id="enterBtn" class="btn red">进入第一幕</button>
     </section>
 
-    <section id="questionPage" class="screen">
+    <section id="questionPage" class="screen question-screen">
       <div class="question-top">
         <span id="sceneText">第一幕</span>
         <span id="countText">1 / 3</span>
@@ -36,50 +36,84 @@
       <div id="options" class="options"></div>
     </section>
 
-<section id="resultPage" class="screen result-screen">
-  <div class="result-hero">
-    <div class="result-meta">
-      <span id="resultNumber"></span>
-      <span id="resultSource"></span>
-    </div>
+    <section id="loadingPage" class="screen loading-screen">
+      <div class="loading-inner">
+        <div class="loading-title">正在生成你的反派人格档案</div>
+        <div class="loading-subtitle">看到那些不为人知的黑暗面……</div>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </section>
 
-    <div class="result-label">你的反派人格是</div>
-    <h2 id="resultTitle"></h2>
-    <div id="resultRole" class="result-role"></div>
-    <div id="resultActor" class="result-actor"></div>
-    <img id="resultImage" class="result-image" alt="" />
-    <p id="resultQuote" class="result-quote"></p>
-  </div>
+    <section id="resultPage" class="screen result-screen">
+      <div class="result-hero">
+        <div class="result-meta">
+          <span id="resultNumber"></span>
+          <span id="resultSource"></span>
+        </div>
 
-  <div class="keyword-title">反派关键词</div>
-  <div id="resultKeywords" class="keyword-list"></div>
+        <div class="result-label">你的反派人格是</div>
+        <h2 id="resultTitle"></h2>
+        <div id="resultRole" class="result-role"></div>
+        <div id="resultActor" class="result-actor"></div>
+        <img id="resultImage" class="result-image" alt="" />
+        <p id="resultQuote" class="result-quote"></p>
+      </div>
 
-  <section class="report-block">
-    <h3>人格判词</h3>
-    <div id="resultVerdict" class="report-text"></div>
-  </section>
+      <div class="keyword-title">反派关键词</div>
+      <div id="resultKeywords" class="keyword-list"></div>
 
-  <section class="report-block">
-    <h3>反派维度解析</h3>
-    <div id="resultRadar" class="radar-chart"></div>
-    <div id="resultDimensions" class="dimension-list"></div>
-    <div id="resultDimensionSummary" class="dimension-summary"></div>
-  </section>
+      <section class="report-block">
+        <h3>人格判词</h3>
+        <div id="resultVerdict" class="report-text"></div>
+      </section>
 
-  <div id="resultSections"></div>
+      <section class="report-block">
+        <h3>反派维度解析</h3>
+        <div id="resultRadar" class="radar-chart"></div>
+        <div id="resultDimensions" class="dimension-list"></div>
+        <div id="resultDimensionSummary" class="dimension-summary"></div>
+      </section>
 
-  <section class="report-block">
-    <h3>相似角色</h3>
-    <div id="resultSimilar" class="similar-list"></div>
-  </section>
+      <div id="resultSections"></div>
 
-  <section class="hidden-line">
-    <span>隐藏台词</span>
-    <p id="resultHiddenLine"></p>
-  </section>
-</section>
+      <section class="report-block">
+        <h3>相似反派</h3>
+        <div id="resultSimilar" class="similar-list"></div>
+      </section>
+
+      <section class="hidden-line">
+        <span>隐藏台词</span>
+        <p id="resultHiddenLine"></p>
+      </section>
+
+      <div class="result-actions">
+        <button id="rebateBtn" class="result-action-btn">好评返现</button>
+        <button id="shareBtn" class="result-action-btn primary">截图保存</button>
+      </div>
+    </section>
 
   </main>
+
+  <div id="rebateModal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel">
+      <button id="closeRebateBtn" class="modal-close" type="button">×</button>
+      <img class="modal-image" src="images/rebate-guide.jpg" alt="好评返现规则" />
+    </div>
+  </div>
+
+  <div id="shareModal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel share-panel">
+      <button id="closeShareBtn" class="modal-close" type="button">×</button>
+      <img id="sharePreview" class="modal-image share-preview" alt="结果长图" />
+      <div class="share-tip">长按图片保存到相册</div>
+    </div>
+  </div>
 
   <script src="data/questions.js"></script>
   <script src="data/personalities/homelander.js"></script>
