@@ -850,3 +850,49 @@ button {
     font-size: 17px;
   }
 }
+/* V0.4 section icons */
+
+.report-block h3::before {
+  display: none;
+}
+
+.report-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px;
+}
+
+.report-heading h3 {
+  margin: 0;
+}
+
+.heading-icon {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #d8b978;
+}
+
+.heading-icon svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+.heading-icon svg path,
+.heading-icon svg rect,
+.heading-icon svg circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.section-kicker {
+  margin-bottom: 8px;
+}
