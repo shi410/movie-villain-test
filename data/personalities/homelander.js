@@ -7,6 +7,7 @@ const homelander = {
   actor: "Antony Starr",
   quote: "我不是想成为神，我只是想让所有人都像妈妈一样对待我。",
   image: "images/homelander/cover.jpg",
+  shareImage: "images/results/homelander-share.jpg",
   keywords: ["缺爱", "崇拜成瘾", "控制欲", "自恋防御", "性压抑"],
 
   verdict: `你不是单纯想赢，也不是单纯想压过别人。你真正想要的是一种无法被满足的确认：别人必须看见你、选择你、需要你，最好还要崇拜你。普通的喜欢对你来说太轻，普通的认可也不够，你要的是一种带有供奉感的爱。你很容易把关系理解成证明题：如果对方爱你，就应该优先考虑你；如果对方重视你，就不该让你感到被冷落；如果你足够重要，世界就应该给你特殊待遇。

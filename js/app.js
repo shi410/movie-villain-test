@@ -159,6 +159,120 @@ async function markTokenUsed() {
   }
 }
 
+function iconSvg(type) {
+  const icons = {
+    file: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 3h7l4 4v14H7z"></path>
+        <path d="M14 3v5h5"></path>
+        <path d="M10 12h6"></path>
+        <path d="M10 16h5"></path>
+      </svg>
+    `,
+    radar: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3l8 5v8l-8 5-8-5V8z"></path>
+        <path d="M12 3v18"></path>
+        <path d="M4 8l16 8"></path>
+        <path d="M20 8L4 16"></path>
+        <path d="M12 8l4 3v4l-4 2-4-2v-4z"></path>
+      </svg>
+    `,
+    mask: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 7c2-2 5-2 8 0 3-2 6-2 8 0v5c0 5-4 8-8 8s-8-3-8-8z"></path>
+        <path d="M8 12h3"></path>
+        <path d="M13 12h3"></path>
+        <path d="M9 16c2 1 4 1 6 0"></path>
+      </svg>
+    `,
+    film: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="4" y="5" width="16" height="14" rx="2"></rect>
+        <path d="M8 5v14"></path>
+        <path d="M16 5v14"></path>
+        <path d="M4 9h4"></path>
+        <path d="M16 9h4"></path>
+        <path d="M4 15h4"></path>
+        <path d="M16 15h4"></path>
+      </svg>
+    `,
+    clash: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M6 18L18 6"></path>
+        <path d="M6 6l12 12"></path>
+        <path d="M4 12h4"></path>
+        <path d="M16 12h4"></path>
+      </svg>
+    `,
+    crack: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 3l3 6-4 3 3 9-6-10 4-3z"></path>
+      </svg>
+    `,
+    balance: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 4v17"></path>
+        <path d="M6 7h12"></path>
+        <path d="M8 7l-4 7h8z"></path>
+        <path d="M16 7l-4 7h8z"></path>
+      </svg>
+    `,
+    road: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 21l3-18"></path>
+        <path d="M17 21L14 3"></path>
+        <path d="M9 9h6"></path>
+        <path d="M8 15h8"></path>
+      </svg>
+    `,
+    pen: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 20l4-1 11-11-3-3L5 16z"></path>
+        <path d="M13 6l3 3"></path>
+      </svg>
+    `,
+    mirror: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="9" cy="10" r="4"></circle>
+        <circle cx="15" cy="14" r="4"></circle>
+        <path d="M12 4v16"></path>
+      </svg>
+    `
+  };
+
+  return icons[type] || icons.file;
+}
+
+function getSectionIcon(title) {
+  const map = {
+    "你的黑暗面与魅力": "mask",
+    "剧情回顾": "film",
+    "冲突与对抗": "clash",
+    "黑暗来源": "crack",
+    "亦正亦邪": "balance",
+    "救赎之路": "road",
+    "选角笔记": "pen"
+  };
+
+  return map[title] || "file";
+}
+
+function renderHeading(title, iconType) {
+  return `
+    <div class="report-heading">
+      <span class="heading-icon">${iconSvg(iconType)}</span>
+      <h3>${title}</h3>
+    </div>
+  `;
+}
+
+function hydrateStaticIcons() {
+  document.querySelectorAll(".heading-icon[data-icon]").forEach(icon => {
+    icon.innerHTML = iconSvg(icon.dataset.icon);
+  });
+}
+
 function textToParagraphs(text) {
   return text
     .trim()
@@ -248,7 +362,7 @@ function renderRadarChart(dimensions) {
 
 function renderResult(personality) {
   currentPersonality = personality;
-
+  hydrateStaticIcons();
   resultNumber.textContent = `NO.${personality.number}`;
   resultSource.textContent = personality.source;
   resultTitle.textContent = personality.title;
@@ -312,7 +426,7 @@ function renderResult(personality) {
       return `
         <section class="report-block">
           <div class="section-kicker">${sectionNumber}</div>
-          <h3>${section.title}</h3>
+          ${renderHeading(section.title, getSectionIcon(section.title))}
           ${body}
           ${note}
         </section>
