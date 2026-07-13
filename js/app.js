@@ -3,12 +3,108 @@ let currentToken = null;
 let tokenUsed = false;
 let currentPersonality = null;
 
-const score = {
-  joker: 0,
-  anton: 0,
-  tbag: 0,
-  tyler: 0
+const personalityOrder = [
+  "homelander",
+  "joker",
+  "makima",
+  "hannibal",
+  "light",
+  "miranda",
+  "pain",
+  "anton",
+  "tbag",
+  "harley",
+  "gollum",
+  "plankton"
+];
+
+const score = {};
+const primaryHits = {};
+const primaryHistory = [];
+
+const personalityTiers = {
+  homelander: {
+    label: "常规反派",
+    className: "regular"
+  },
+  joker: {
+    label: "常规反派",
+    className: "regular"
+  },
+  makima: {
+    label: "常规反派",
+    className: "regular"
+  },
+  hannibal: {
+    label: "常规反派",
+    className: "regular"
+  },
+  light: {
+    label: "常规反派",
+    className: "regular"
+  },
+  miranda: {
+    label: "常规反派",
+    className: "regular"
+  },
+  pain: {
+    label: "稀有反派",
+    className: "rare"
+  },
+  anton: {
+    label: "稀有反派",
+    className: "rare"
+  },
+  tbag: {
+    label: "稀有反派",
+    className: "rare"
+  },
+  harley: {
+    label: "稀有反派",
+    className: "rare"
+  },
+  plankton: {
+    label: "隐藏反派",
+    className: "hidden"
+  },
+  gollum: {
+    label: "隐藏反派",
+    className: "hidden"
+  }
 };
+
+const archiveGroups = [
+  {
+    title: "常规反派",
+    className: "regular",
+    ids: [
+      "homelander",
+      "hannibal",
+      "makima",
+      "joker",
+      "miranda",
+      "light"
+    ]
+  },
+  {
+    title: "稀有反派",
+    className: "rare",
+    ids: [
+      "pain",
+      "anton",
+      "tbag",
+      "harley"
+    ]
+  },
+  {
+    title: "隐藏反派",
+    className: "hidden",
+    ids: [
+      "plankton",
+      "gollum"
+    ]
+  }
+];
 
 const homePage = document.getElementById("homePage");
 const introPage = document.getElementById("introPage");
@@ -18,6 +114,7 @@ const resultPage = document.getElementById("resultPage");
 
 const startBtn = document.getElementById("startBtn");
 const enterBtn = document.getElementById("enterBtn");
+const archiveBtn = document.getElementById("archiveBtn");
 
 const questionText = document.getElementById("questionText");
 const options = document.getElementById("options");
@@ -44,9 +141,21 @@ const rebateBtn = document.getElementById("rebateBtn");
 const shareBtn = document.getElementById("shareBtn");
 const rebateModal = document.getElementById("rebateModal");
 const shareModal = document.getElementById("shareModal");
+const archiveModal = document.getElementById("archiveModal");
 const closeRebateBtn = document.getElementById("closeRebateBtn");
 const closeShareBtn = document.getElementById("closeShareBtn");
+const closeArchiveBtn = document.getElementById("closeArchiveBtn");
 const sharePreview = document.getElementById("sharePreview");
+const archiveList = document.getElementById("archiveList");
+
+function resetScores() {
+  personalityOrder.forEach(id => {
+    score[id] = 0;
+    primaryHits[id] = 0;
+  });
+
+  primaryHistory.length = 0;
+}
 
 function showPage(page) {
   document.querySelectorAll(".screen").forEach(screen => {
@@ -99,6 +208,40 @@ function getOptionLabel(index) {
   return ["A", "B", "C", "D"][index] || "";
 }
 
+function applyOptionScore(option) {
+  if (option.scores) {
+    Object.keys(option.scores).forEach(id => {
+      if (typeof score[id] !== "number") {
+        score[id] = 0;
+      }
+
+      score[id] += option.scores[id];
+    });
+  } else if (option.type) {
+    if (typeof score[option.type] !== "number") {
+      score[option.type] = 0;
+    }
+
+    score[option.type] += 1;
+  }
+
+  if (option.primary) {
+    if (typeof primaryHits[option.primary] !== "number") {
+      primaryHits[option.primary] = 0;
+    }
+
+    primaryHits[option.primary] += 1;
+    primaryHistory.push(option.primary);
+  } else if (option.type) {
+    if (typeof primaryHits[option.type] !== "number") {
+      primaryHits[option.type] = 0;
+    }
+
+    primaryHits[option.type] += 1;
+    primaryHistory.push(option.type);
+  }
+}
+
 function loadQuestion() {
   const q = questions[currentQuestion];
 
@@ -118,7 +261,8 @@ function loadQuestion() {
     `;
 
     btn.onclick = () => {
-      score[option.type]++;
+      applyOptionScore(option);
+
       currentQuestion++;
 
       if (currentQuestion >= questions.length) {
@@ -291,6 +435,7 @@ function renderRadarChart(dimensions) {
 
   function pointAt(index, radius) {
     const angle = angleOffset + (Math.PI * 2 * index) / count;
+
     return {
       x: center + Math.cos(angle) * radius,
       y: center + Math.sin(angle) * radius
@@ -361,12 +506,22 @@ function renderRadarChart(dimensions) {
 }
 
 function renderResult(personality) {
+  const tier = personalityTiers[personality.id] || {
+    label: "常规反派",
+    className: "regular"
+  };
+
   currentPersonality = personality;
   hydrateStaticIcons();
+
   resultNumber.textContent = `NO.${personality.number}`;
   resultSource.textContent = personality.source;
   resultTitle.textContent = personality.title;
-  resultRole.textContent = `${personality.role}｜${personality.source}`;
+
+  resultRole.innerHTML = `
+    <span class="villain-tier ${tier.className}">${tier.label}</span>${personality.role}｜${personality.source}
+  `;
+
   resultActor.textContent = `演员：${personality.actor}`;
   resultQuote.textContent = personality.quote;
 
@@ -408,6 +563,7 @@ function renderResult(personality) {
   resultSections.innerHTML = personality.sections
     .map((section, index) => {
       const sectionNumber = String(index + 3).padStart(2, "0");
+
       const body = section.items
         ? section.items
             .map(item => `
@@ -447,18 +603,40 @@ function renderResult(personality) {
   resultHiddenLine.textContent = personality.hiddenLine;
 }
 
-function getResultPersonality() {
-  let maxType = "joker";
-  let maxScore = -1;
-
-  for (const key in score) {
-    if (score[key] > maxScore) {
-      maxScore = score[key];
-      maxType = key;
+function getPrimaryLastIndex(id) {
+  for (let i = primaryHistory.length - 1; i >= 0; i--) {
+    if (primaryHistory[i] === id) {
+      return i;
     }
   }
 
-  return results[maxType];
+  return -1;
+}
+
+function getResultPersonality() {
+  const sortedIds = personalityOrder.slice().sort((a, b) => {
+    const scoreDiff = (score[b] || 0) - (score[a] || 0);
+
+    if (scoreDiff !== 0) {
+      return scoreDiff;
+    }
+
+    const primaryDiff = (primaryHits[b] || 0) - (primaryHits[a] || 0);
+
+    if (primaryDiff !== 0) {
+      return primaryDiff;
+    }
+
+    const lastDiff = getPrimaryLastIndex(b) - getPrimaryLastIndex(a);
+
+    if (lastDiff !== 0) {
+      return lastDiff;
+    }
+
+    return personalityOrder.indexOf(a) - personalityOrder.indexOf(b);
+  });
+
+  return results[sortedIds[0]];
 }
 
 async function showLoadingThenResult() {
@@ -478,6 +656,48 @@ async function showLoadingThenResult() {
   showPage(resultPage);
 }
 
+function renderArchive() {
+  archiveList.innerHTML = archiveGroups
+    .map(group => {
+      const cards = group.ids
+        .map(id => {
+          const personality = results[id];
+          const isHidden = group.className === "hidden";
+
+          if (!personality) return "";
+
+          if (isHidden) {
+            return `
+              <div class="archive-card">
+                <div class="archive-avatar unknown">?</div>
+                <div class="archive-name">？？？</div>
+              </div>
+            `;
+          }
+
+          return `
+            <div class="archive-card">
+              <div class="archive-avatar">
+                <img src="${personality.image}" alt="${personality.role}" />
+              </div>
+              <div class="archive-name">${personality.role}</div>
+            </div>
+          `;
+        })
+        .join("");
+
+      return `
+        <section class="archive-group">
+          <div class="villain-tier ${group.className}">${group.title}</div>
+          <div class="archive-grid">
+            ${cards}
+          </div>
+        </section>
+      `;
+    })
+    .join("");
+}
+
 function openModal(modal) {
   modal.classList.add("active");
   document.body.classList.add("modal-open");
@@ -494,15 +714,18 @@ startBtn.onclick = () => {
 
 enterBtn.onclick = () => {
   currentQuestion = 0;
-
-  score.joker = 0;
-  score.anton = 0;
-  score.tbag = 0;
-  score.tyler = 0;
+  resetScores();
 
   loadQuestion();
   showPage(questionPage);
 };
+
+if (archiveBtn) {
+  archiveBtn.onclick = () => {
+    renderArchive();
+    openModal(archiveModal);
+  };
+}
 
 rebateBtn.onclick = () => {
   openModal(rebateModal);
@@ -526,6 +749,12 @@ closeShareBtn.onclick = () => {
   closeModal(shareModal);
 };
 
+if (closeArchiveBtn) {
+  closeArchiveBtn.onclick = () => {
+    closeModal(archiveModal);
+  };
+}
+
 rebateModal.querySelector(".modal-backdrop").onclick = () => {
   closeModal(rebateModal);
 };
@@ -534,4 +763,11 @@ shareModal.querySelector(".modal-backdrop").onclick = () => {
   closeModal(shareModal);
 };
 
+if (archiveModal) {
+  archiveModal.querySelector(".modal-backdrop").onclick = () => {
+    closeModal(archiveModal);
+  };
+}
+
+resetScores();
 validateToken();
