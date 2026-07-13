@@ -1188,3 +1188,335 @@ button {
     line-height: 1.4;
   }
 }
+
+/* 答题页微调版：选项文字加大，保持卡片紧凑 */
+#questionText {
+  margin-top: 8px;
+  margin-right: 0;
+  margin-bottom: 16px;
+  margin-left: 0;
+  font-size: 20px;
+  line-height: 1.46;
+  font-weight: 700;
+}
+
+.options {
+  gap: 9px;
+}
+
+.option {
+  min-height: auto;
+  padding-top: 10px;
+  padding-right: 12px;
+  padding-bottom: 10px;
+  padding-left: 12px;
+  font-size: 16px;
+  line-height: 1.48;
+}
+
+.option-letter {
+  min-width: 28px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.option-text {
+  font-size: 16px;
+  line-height: 1.48;
+}
+
+@media (max-width: 480px) {
+  .question-screen {
+    padding-top: 16px;
+    padding-right: 13px;
+    padding-bottom: 16px;
+    padding-left: 13px;
+  }
+
+  #questionText {
+    margin-top: 8px;
+    margin-right: 0;
+    margin-bottom: 14px;
+    margin-left: 0;
+    font-size: 19px;
+    line-height: 1.44;
+    font-weight: 700;
+  }
+
+  .options {
+    gap: 8px;
+  }
+
+  .option {
+    min-height: auto;
+    padding-top: 10px;
+    padding-right: 12px;
+    padding-bottom: 10px;
+    padding-left: 12px;
+    font-size: 15.5px;
+    line-height: 1.46;
+  }
+
+  .option-letter {
+    min-width: 26px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .option-text {
+    font-size: 15.5px;
+    line-height: 1.46;
+  }
+}
+
+@media (max-width: 390px) {
+  .question-screen {
+    padding-top: 14px;
+    padding-right: 12px;
+    padding-bottom: 14px;
+    padding-left: 12px;
+  }
+
+  #questionText {
+    margin-bottom: 13px;
+    font-size: 18px;
+    line-height: 1.42;
+  }
+
+  .options {
+    gap: 7px;
+  }
+
+  .option {
+    padding-top: 9px;
+    padding-right: 11px;
+    padding-bottom: 9px;
+    padding-left: 11px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .option-letter {
+    min-width: 25px;
+    font-size: 19px;
+  }
+
+  .option-text {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+}
+
+
+/* 答题页微调：选项文字加大，但保持卡片紧凑 */
+#countText {
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+#questionText {
+  margin-top: 8px;
+  margin-right: 0;
+  margin-bottom: 16px;
+  margin-left: 0;
+  font-size: 20px;
+  line-height: 1.46;
+  font-weight: 700;
+}
+
+.options {
+  gap: 9px;
+}
+
+.option {
+  min-height: auto;
+  padding-top: 10px;
+  padding-right: 12px;
+  padding-bottom: 10px;
+  padding-left: 12px;
+  font-size: 16px;
+  line-height: 1.48;
+}
+
+.option-letter {
+  min-width: 28px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.option-text {
+  font-size: 16px;
+  line-height: 1.48;
+}
+
+/* 结果页：共振人格 */
+.resonance-block {
+  margin-top: 28px;
+}
+
+.resonance-list {
+  display: grid;
+  gap: 18px;
+}
+
+.resonance-item {
+  padding-top: 18px;
+  padding-right: 0;
+  padding-bottom: 20px;
+  padding-left: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.resonance-item:last-child {
+  border-bottom: 0;
+}
+
+.resonance-main {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.resonance-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: #fff8ef;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.resonance-score {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: rgba(255, 248, 239, 0.68);
+  white-space: nowrap;
+}
+
+.resonance-score span {
+  font-size: 13px;
+}
+
+.resonance-score strong {
+  color: #ff5265;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.resonance-track {
+  height: 8px;
+  margin-top: 14px;
+  margin-right: 0;
+  margin-bottom: 14px;
+  margin-left: 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.resonance-track div {
+  height: 100%;
+  border-radius: inherit;
+  background: #ee4757;
+}
+
+.resonance-item p {
+  margin: 0;
+  color: rgba(255, 248, 239, 0.68);
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+@media (max-width: 480px) {
+  #countText {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  #questionText {
+    margin-top: 8px;
+    margin-right: 0;
+    margin-bottom: 14px;
+    margin-left: 0;
+    font-size: 19px;
+    line-height: 1.44;
+    font-weight: 700;
+  }
+
+  .options {
+    gap: 8px;
+  }
+
+  .option {
+    min-height: auto;
+    padding-top: 10px;
+    padding-right: 12px;
+    padding-bottom: 10px;
+    padding-left: 12px;
+    font-size: 15.5px;
+    line-height: 1.46;
+  }
+
+  .option-letter {
+    min-width: 26px;
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .option-text {
+    font-size: 15.5px;
+    line-height: 1.46;
+  }
+
+  .resonance-main {
+    display: block;
+  }
+
+  .resonance-name {
+    font-size: 18px;
+  }
+
+  .resonance-score {
+    margin-top: 10px;
+  }
+
+  .resonance-score strong {
+    font-size: 28px;
+  }
+
+  .resonance-item p {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 390px) {
+  #questionText {
+    margin-bottom: 13px;
+    font-size: 18px;
+    line-height: 1.42;
+  }
+
+  .option {
+    padding-top: 9px;
+    padding-right: 11px;
+    padding-bottom: 9px;
+    padding-left: 11px;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  .option-letter {
+    min-width: 25px;
+    font-size: 19px;
+  }
+
+  .option-text {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+}

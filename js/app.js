@@ -246,7 +246,7 @@ function loadQuestion() {
   const q = questions[currentQuestion];
 
   questionText.textContent = q.text;
-  countText.textContent = `${currentQuestion + 1} / ${questions.length}`;
+  countText.textContent = q.title || `${currentQuestion + 1} / ${questions.length}`;
   progressBar.style.width = ((currentQuestion + 1) / questions.length * 100) + "%";
 
   options.innerHTML = "";
@@ -505,6 +505,79 @@ function renderRadarChart(dimensions) {
   `;
 }
 
+function getResonanceList() {
+  const maxScore = questions.length * 2;
+
+  return personalityOrder
+    .map(id => {
+      const personality = results[id];
+      const rawScore = score[id] || 0;
+      const percent = Math.min(100, Math.round((rawScore / maxScore) * 100));
+
+      return {
+        id,
+        personality,
+        rawScore,
+        percent
+      };
+    })
+    .filter(item => item.personality)
+    .sort((a, b) => {
+      if (b.rawScore !== a.rawScore) {
+        return b.rawScore - a.rawScore;
+      }
+
+      return personalityOrder.indexOf(a.id) - personalityOrder.indexOf(b.id);
+    })
+    .slice(0, 3);
+}
+
+function renderResonance() {
+  const resonanceList = getResonanceList();
+
+  const cards = resonanceList
+    .map(item => {
+      const tier = personalityTiers[item.id] || {
+        label: "常规反派",
+        className: "regular"
+      };
+
+      const isHidden = tier.className === "hidden";
+      const displayName = isHidden ? "？？？" : item.personality.role;
+      const quote = item.personality.quote || "";
+
+      return `
+        <div class="resonance-item">
+          <div class="resonance-main">
+            <div class="resonance-name">
+              <span class="villain-tier ${tier.className}">${tier.label}</span>
+              <span>${displayName}—${item.personality.title}</span>
+            </div>
+            <div class="resonance-score">
+              <span>契合度</span>
+              <strong>${item.percent}%</strong>
+            </div>
+          </div>
+          <div class="resonance-track">
+            <div style="width: ${item.percent}%"></div>
+          </div>
+          <p>${quote}</p>
+        </div>
+      `;
+    })
+    .join("");
+
+  return `
+    <section class="report-block resonance-block">
+      <div class="section-kicker">02</div>
+      ${renderHeading("共振人格", "radar")}
+      <div class="resonance-list">
+        ${cards}
+      </div>
+    </section>
+  `;
+}
+
 function renderResult(personality) {
   const tier = personalityTiers[personality.id] || {
     label: "常规反派",
@@ -560,7 +633,7 @@ function renderResult(personality) {
     ? textToParagraphs(personality.dimensionSummary)
     : "";
 
-  resultSections.innerHTML = personality.sections
+  resultSections.innerHTML = renderResonance() + personality.sections
     .map((section, index) => {
       const sectionNumber = String(index + 3).padStart(2, "0");
 
