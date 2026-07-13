@@ -106,6 +106,33 @@ const archiveGroups = [
   }
 ];
 
+const questionTitles = [
+  "01｜被夺走功劳",
+  "02｜新团队站位",
+  "03｜关系冷淡",
+  "04｜错误被原谅",
+  "05｜翻身机会",
+  "06｜放不下的执念",
+  "07｜低效新人",
+  "08｜混乱房间",
+  "09｜无人制约的力量",
+  "10｜没痛过的人",
+  "11｜喜欢一个人",
+  "12｜资源不公的竞争",
+  "13｜被依赖的影响力",
+  "14｜公开羞辱",
+  "15｜最害怕的评价",
+  "16｜有毒关系",
+  "17｜腐烂系统",
+  "18｜被说太冷",
+  "19｜赢了之后",
+  "20｜亲密关系边界",
+  "21｜秘密计划",
+  "22｜窥见真实内心",
+  "23｜人生低谷",
+  "24｜镜子前的黑暗面"
+];
+
 const homePage = document.getElementById("homePage");
 const introPage = document.getElementById("introPage");
 const questionPage = document.getElementById("questionPage");
@@ -246,7 +273,7 @@ function loadQuestion() {
   const q = questions[currentQuestion];
 
   questionText.textContent = q.text;
-  countText.textContent = q.title || `${currentQuestion + 1} / ${questions.length}`;
+  countText.textContent = q.title || questionTitles[currentQuestion] || `${currentQuestion + 1} / ${questions.length}`;
   progressBar.style.width = ((currentQuestion + 1) / questions.length * 100) + "%";
 
   options.innerHTML = "";
@@ -506,19 +533,17 @@ function renderRadarChart(dimensions) {
 }
 
 function getResonanceList() {
-  const maxScore = questions.length * 2;
-
-  return personalityOrder
+  const sortedItems = personalityOrder
     .map(id => {
       const personality = results[id];
       const rawScore = score[id] || 0;
-      const percent = Math.min(100, Math.round((rawScore / maxScore) * 100));
+      const hitCount = primaryHits[id] || 0;
 
       return {
         id,
         personality,
         rawScore,
-        percent
+        hitCount
       };
     })
     .filter(item => item.personality)
@@ -527,12 +552,37 @@ function getResonanceList() {
         return b.rawScore - a.rawScore;
       }
 
+      if (b.hitCount !== a.hitCount) {
+        return b.hitCount - a.hitCount;
+      }
+
       return personalityOrder.indexOf(a.id) - personalityOrder.indexOf(b.id);
-    })
-    .slice(0, 3);
+    });
+
+  const topScore = sortedItems[0] ? sortedItems[0].rawScore : 0;
+
+  return sortedItems
+    .slice(0, 3)
+    .map((item, index) => {
+      let percent = 0;
+
+      if (topScore > 0) {
+        const relative = item.rawScore / topScore;
+        const hitBonus = Math.min(4, item.hitCount);
+        const rankPenalty = index * 5;
+
+        percent = Math.round(68 + relative * 24 + hitBonus - rankPenalty);
+        percent = Math.max(62, Math.min(96, percent));
+      }
+
+      return {
+        ...item,
+        percent
+      };
+    });
 }
 
-function renderResonance() {
+function renderResonance(sectionNumber) {
   const resonanceList = getResonanceList();
 
   const cards = resonanceList
@@ -544,14 +594,18 @@ function renderResonance() {
 
       const isHidden = tier.className === "hidden";
       const displayName = isHidden ? "？？？" : item.personality.role;
+      const displaySource = isHidden ? "《？？？》" : item.personality.source;
       const quote = item.personality.quote || "";
 
       return `
         <div class="resonance-item">
           <div class="resonance-main">
-            <div class="resonance-name">
-              <span class="villain-tier ${tier.className}">${tier.label}</span>
-              <span>${displayName}—${item.personality.title}</span>
+            <div class="resonance-name-wrap">
+              <div class="resonance-name">
+                <span class="villain-tier ${tier.className}">${tier.label}</span>
+                <span>${displayName}—${item.personality.title}</span>
+              </div>
+              <div class="resonance-source">${displaySource}</div>
             </div>
             <div class="resonance-score">
               <span>契合度</span>
@@ -568,8 +622,8 @@ function renderResonance() {
     .join("");
 
   return `
-    <section class="report-block resonance-block">
-      <div class="section-kicker">02</div>
+    <section id="resonanceBlock" class="report-block resonance-block">
+      <div class="section-kicker">${sectionNumber}</div>
       ${renderHeading("共振人格", "radar")}
       <div class="resonance-list">
         ${cards}
@@ -633,7 +687,7 @@ function renderResult(personality) {
     ? textToParagraphs(personality.dimensionSummary)
     : "";
 
-  resultSections.innerHTML = renderResonance() + personality.sections
+  resultSections.innerHTML = personality.sections
     .map((section, index) => {
       const sectionNumber = String(index + 3).padStart(2, "0");
 
@@ -662,6 +716,19 @@ function renderResult(personality) {
       `;
     })
     .join("");
+
+  const oldResonanceBlock = document.getElementById("resonanceBlock");
+
+  if (oldResonanceBlock) {
+    oldResonanceBlock.remove();
+  }
+
+  const resonanceNumber = String(personality.sections.length + 3).padStart(2, "0");
+  const similarBlock = resultSimilar.closest(".report-block");
+
+  if (similarBlock) {
+    similarBlock.insertAdjacentHTML("beforebegin", renderResonance(resonanceNumber));
+  }
 
   resultSimilar.innerHTML = personality.similar
     .map(item => `
