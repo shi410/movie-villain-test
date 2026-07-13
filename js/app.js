@@ -107,31 +107,62 @@ const archiveGroups = [
 ];
 
 const questionTitles = [
-  "01｜被夺走功劳",
-  "02｜新团队站位",
-  "03｜关系冷淡",
-  "04｜错误被原谅",
-  "05｜翻身机会",
-  "06｜放不下的执念",
-  "07｜低效新人",
-  "08｜混乱房间",
-  "09｜无人制约的力量",
-  "10｜没痛过的人",
-  "11｜喜欢一个人",
-  "12｜资源不公的竞争",
-  "13｜被依赖的影响力",
-  "14｜公开羞辱",
-  "15｜最害怕的评价",
-  "16｜有毒关系",
-  "17｜腐烂系统",
-  "18｜被说太冷",
-  "19｜赢了之后",
-  "20｜亲密关系边界",
-  "21｜秘密计划",
-  "22｜窥见真实内心",
-  "23｜人生低谷",
-  "24｜镜子前的黑暗面"
+  "被夺走功劳",
+  "新团队站位",
+  "关系冷淡",
+  "错误被原谅",
+  "翻身机会",
+  "放不下的执念",
+  "低效新人",
+  "混乱房间",
+  "无人制约的力量",
+  "没痛过的人",
+  "喜欢一个人",
+  "资源不公的竞争",
+  "被依赖的影响力",
+  "公开羞辱",
+  "最害怕的评价",
+  "有毒关系",
+  "腐烂系统",
+  "被说太冷",
+  "赢了之后",
+  "亲密关系边界",
+  "秘密计划",
+  "窥见真实内心",
+  "人生低谷",
+  "镜子前的黑暗面"
 ];
+
+const sceneNames = [
+  "第一幕",
+  "第二幕",
+  "第三幕",
+  "第四幕",
+  "第五幕",
+  "第六幕",
+  "第七幕",
+  "第八幕",
+  "第九幕",
+  "第十幕",
+  "第十一幕",
+  "第十二幕",
+  "第十三幕",
+  "第十四幕",
+  "第十五幕",
+  "第十六幕",
+  "第十七幕",
+  "第十八幕",
+  "第十九幕",
+  "第二十幕",
+  "第二十一幕",
+  "第二十二幕",
+  "第二十三幕",
+  "第二十四幕"
+];
+
+const questionStageText = Array.from(questionPage.querySelectorAll("*")).find(item => {
+  return item.textContent.trim() === "第一幕";
+});
 
 const homePage = document.getElementById("homePage");
 const introPage = document.getElementById("introPage");
@@ -273,7 +304,16 @@ function loadQuestion() {
   const q = questions[currentQuestion];
 
   questionText.textContent = q.text;
-  countText.textContent = q.title || questionTitles[currentQuestion] || `${currentQuestion + 1} / ${questions.length}`;
+  const sceneName = sceneNames[currentQuestion] || `第${currentQuestion + 1}幕`;
+  const questionTitle = q.title || questionTitles[currentQuestion] || "";
+
+  if (questionStageText) {
+    questionStageText.textContent = questionTitle
+      ? `${sceneName}｜${questionTitle}`
+      : sceneName;
+  }
+
+  countText.textContent = `${currentQuestion + 1} / ${questions.length}`;
   progressBar.style.width = ((currentQuestion + 1) / questions.length * 100) + "%";
 
   options.innerHTML = "";

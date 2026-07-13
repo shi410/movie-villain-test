@@ -1634,3 +1634,30 @@ button {
     line-height: 1.46;
   }
 }
+
+
+/* 答题页顶部标题：左侧显示第几幕和题目主题 */
+.question-screen [class*="kicker"],
+.question-screen [class*="scene"],
+.question-screen [class*="meta"] {
+  max-width: 68%;
+}
+
+#countText {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .question-screen [class*="kicker"],
+  .question-screen [class*="scene"],
+  .question-screen [class*="meta"] {
+    max-width: 70%;
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  #countText {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+}
