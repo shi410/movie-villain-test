@@ -1063,3 +1063,128 @@ button {
     font-size: 12px;
   }
 }
+
+
+/* 答题页紧凑版：降低题干、选项字号和间距 */
+.question-screen {
+  padding-top: 24px;
+  padding-right: 16px;
+  padding-bottom: 20px;
+  padding-left: 16px;
+}
+
+#questionText {
+  margin-top: 10px;
+  margin-right: 0;
+  margin-bottom: 18px;
+  margin-left: 0;
+  font-size: 22px;
+  line-height: 1.5;
+}
+
+.options {
+  gap: 10px;
+}
+
+.option {
+  min-height: auto;
+  padding-top: 12px;
+  padding-right: 14px;
+  padding-bottom: 12px;
+  padding-left: 14px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.option-letter {
+  min-width: 26px;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.option-text {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* 手机端进一步压缩，让题干和四个选项尽量同屏显示 */
+@media (max-width: 480px) {
+  .question-screen {
+    padding-top: 18px;
+    padding-right: 13px;
+    padding-bottom: 16px;
+    padding-left: 13px;
+  }
+
+  #questionText {
+    margin-top: 8px;
+    margin-right: 0;
+    margin-bottom: 14px;
+    margin-left: 0;
+    font-size: 18px;
+    line-height: 1.42;
+  }
+
+  .options {
+    gap: 8px;
+  }
+
+  .option {
+    min-height: auto;
+    padding-top: 10px;
+    padding-right: 12px;
+    padding-bottom: 10px;
+    padding-left: 12px;
+    font-size: 14px;
+    line-height: 1.42;
+  }
+
+  .option-letter {
+    min-width: 24px;
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .option-text {
+    font-size: 14px;
+    line-height: 1.42;
+  }
+}
+
+@media (max-width: 390px) {
+  .question-screen {
+    padding-top: 14px;
+    padding-right: 12px;
+    padding-bottom: 14px;
+    padding-left: 12px;
+  }
+
+  #questionText {
+    margin-bottom: 12px;
+    font-size: 17px;
+    line-height: 1.4;
+  }
+
+  .options {
+    gap: 7px;
+  }
+
+  .option {
+    padding-top: 9px;
+    padding-right: 11px;
+    padding-bottom: 9px;
+    padding-left: 11px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .option-letter {
+    min-width: 22px;
+    font-size: 17px;
+  }
+
+  .option-text {
+    font-size: 13px;
+    line-height: 1.4;
+  }
+}
