@@ -1,4 +1,5 @@
 let currentQuestion = 0;
+let userAnswers = new Array(questions.length).fill(null);
 let currentToken = null;
 let tokenUsed = false;
 let currentPersonality = null;
@@ -174,6 +175,8 @@ const archiveBtn = document.getElementById("archiveBtn");
 
 const questionText = document.getElementById("questionText");
 const options = document.getElementById("options");
+const prevQuestionBtn = document.getElementById("prevQuestionBtn");
+const nextQuestionBtn = document.getElementById("nextQuestionBtn");
 const progressBar = document.getElementById("progressBar");
 const countText = document.getElementById("countText");
 
@@ -300,19 +303,14 @@ function applyOptionScore(option) {
 
 function loadQuestion() {
   const q = questions[currentQuestion];
-
-  questionText.textContent = q.text;
+  const sceneText = document.getElementById("sceneText");
   const sceneName = sceneNames[currentQuestion] || `第${currentQuestion + 1}幕`;
   const questionTitle = q.title || questionTitles[currentQuestion] || "";
 
-  if (!questionStageText) {
-    questionStageText = Array.from(questionPage.querySelectorAll("*")).find(item => {
-      return item.textContent.trim() === "第一幕";
-    });
-  }
+  questionText.textContent = q.text;
 
-  if (questionStageText) {
-    questionStageText.textContent = questionTitle
+  if (sceneText) {
+    sceneText.textContent = questionTitle
       ? `${sceneName}｜${questionTitle}`
       : sceneName;
   }
@@ -325,25 +323,60 @@ function loadQuestion() {
   q.options.forEach((option, index) => {
     const btn = document.createElement("button");
 
+    btn.type = "button";
     btn.className = "option";
+
+    if (userAnswers[currentQuestion] === index) {
+      btn.classList.add("selected");
+    }
+
     btn.innerHTML = `
       <span class="option-letter">${getOptionLabel(index)}.</span>
       <span class="option-text">${option.text}</span>
     `;
 
     btn.onclick = () => {
-      applyOptionScore(option);
+      userAnswers[currentQuestion] = index;
 
-      currentQuestion++;
-
-      if (currentQuestion >= questions.length) {
-        showLoadingThenResult();
-      } else {
+      if (currentQuestion < questions.length - 1) {
+        currentQuestion++;
         loadQuestion();
+        return;
       }
+
+      updateQuestionNav();
     };
 
     options.appendChild(btn);
+  });
+
+  updateQuestionNav();
+}
+
+function updateQuestionNav() {
+  if (!prevQuestionBtn || !nextQuestionBtn) return;
+
+  prevQuestionBtn.disabled = currentQuestion === 0;
+  nextQuestionBtn.disabled = userAnswers[currentQuestion] === null;
+
+  if (currentQuestion === questions.length - 1) {
+    nextQuestionBtn.textContent = "查看结果";
+  } else {
+    nextQuestionBtn.textContent = "下一题";
+  }
+}
+
+function rebuildScoresFromAnswers() {
+  resetScores();
+
+  userAnswers.forEach((answerIndex, questionIndex) => {
+    if (answerIndex === null) return;
+
+    const selectedOption = questions[questionIndex].options[answerIndex];
+
+    if (!selectedOption) return;
+
+    applyOptionScore(selectedOption);
   });
 }
 
@@ -898,11 +931,36 @@ startBtn.onclick = () => {
 
 enterBtn.onclick = () => {
   currentQuestion = 0;
+  userAnswers = new Array(questions.length).fill(null);
   resetScores();
 
   loadQuestion();
   showPage(questionPage);
 };
+
+if (prevQuestionBtn) {
+  prevQuestionBtn.onclick = () => {
+    if (currentQuestion <= 0) return;
+
+    currentQuestion--;
+    loadQuestion();
+  };
+}
+
+if (nextQuestionBtn) {
+  nextQuestionBtn.onclick = () => {
+    if (userAnswers[currentQuestion] === null) return;
+
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
+      loadQuestion();
+      return;
+    }
+
+    rebuildScoresFromAnswers();
+    showLoadingThenResult();
+  };
+}
 
 if (archiveBtn) {
   archiveBtn.onclick = () => {

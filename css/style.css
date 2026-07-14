@@ -1740,3 +1740,57 @@ button {
     top: -11px;
   }
 }
+
+/* 答题页：上一题 / 下一题按钮 */
+.question-nav {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.question-nav-btn {
+  flex: 1;
+  height: 48px;
+  border: 1px solid rgba(255, 248, 239, 0.18);
+  border-radius: 14px;
+  background: rgba(255, 248, 239, 0.06);
+  color: rgba(255, 248, 239, 0.9);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.question-nav-btn.primary {
+  border-color: rgba(190, 30, 42, 0.85);
+  background: #b91f2b;
+  color: #fff7ef;
+}
+
+.question-nav-btn:active {
+  transform: scale(0.98);
+}
+
+.question-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.option.selected {
+  border-color: rgba(238, 210, 135, 0.9) !important;
+  background: rgba(238, 210, 135, 0.13) !important;
+  box-shadow: 0 0 0 1px rgba(238, 210, 135, 0.18);
+}
+
+@media (max-width: 480px) {
+  .question-nav {
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .question-nav-btn {
+    height: 46px;
+    font-size: 15px;
+  }
+}

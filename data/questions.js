@@ -1,5 +1,6 @@
 const questions = [
   {
+    title: "被夺走功劳",
     text: "庆功宴上，灯光打在台中央。这个项目最难的部分明明是你熬夜扛下来的，但被感谢的人不是你。那个人站在掌声里，说着“我们一起努力”，还朝你举了举杯。最刺痛你的不是没被夸，而是他们真的可以享受你的付出，再把你从故事里删掉。\n\n你最接近哪种反应？",
     options: [
       {
@@ -37,47 +38,19 @@ const questions = [
     ]
   },
   {
-    text: "你进入一个新团队。大家表面友好，但暗地里已经分好圈层、利益和上下级。你很快意识到，真正的规则不写在制度里，而藏在每个人说话的停顿、眼神和站位里。\n\n你会怎么让自己站稳？",
+    title: "亲密关系开始失控",
+    text: "深夜，对方的头像亮了又暗。你的消息停在已读不回，而你刚刚看见他给另一个人的动态点了赞。你没有证据，但那种被移出中心的感觉已经出现了。你越盯着屏幕，越觉得自己正在被替换。\n\n你最可能怎么做？",
     options: [
       {
-        text: "先观察谁真正有权，再决定该靠近谁、利用谁。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          makima: 1
-        }
-      },
-      {
-        text: "我会用专业能力压住场面，让他们知道标准在哪。",
-        primary: "miranda",
-        scores: {
-          miranda: 2,
-          light: 1
-        }
-      },
-      {
-        text: "我会温柔地记住每个人缺什么，再一点点建立影响力。",
+        text: "我会给他最缺的东西，让他自己走回我身边。",
         primary: "makima",
         scores: {
           makima: 2,
-          hannibal: 1
+          homelander: 1
         }
       },
       {
-        text: "我不急着融入，我先弄清这套规则到底荒谬在哪里。",
-        primary: "anton",
-        scores: {
-          anton: 2,
-          joker: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你最信任的人突然冷淡了。消息回得很慢，语气也变短。对方说只是最近太累，但你隐隐感觉，关系里有什么东西正在从你手里滑走。\n\n你第一反应更像哪一种？",
-    options: [
-      {
-        text: "我要确认自己是不是还重要，哪怕方式有点过分。",
+        text: "我要立刻确认：你到底还要不要我？别让我像个笑话。",
         primary: "homelander",
         scores: {
           homelander: 2,
@@ -85,15 +58,7 @@ const questions = [
         }
       },
       {
-        text: "我会更热烈一点，直到对方重新回应我。",
-        primary: "harley",
-        scores: {
-          harley: 2,
-          gollum: 1
-        }
-      },
-      {
-        text: "我会忍不住反复想这段关系是不是已经不属于我了。",
+        text: "我知道这关系有毒，可越痛，我越像被它钩住。",
         primary: "gollum",
         scores: {
           gollum: 2,
@@ -101,20 +66,37 @@ const questions = [
         }
       },
       {
-        text: "我会后退一步，看看对方的冷淡是真实还是策略。",
+        text: "我会冷下来，先看清他到底从哪一步开始变心。",
         primary: "hannibal",
         scores: {
           hannibal: 2,
-          makima: 1
+          miranda: 1
         }
       }
     ]
   },
   {
-    text: "一个人犯了错，却靠哭、解释和装可怜逃过了后果。周围人开始替他说话，仿佛只要他足够脆弱，所有规则都可以临时失效。\n\n你心里最强烈的声音是？",
+    title: "被系统压过的人拿到权限",
+    text: "你曾经被一套系统卡住过。流程、名单、审核、规则，每一步都说得很公平，可最后被挡在门外的人总是你。现在，你突然拿到一个没人知道的权限：你可以删除记录、改写结果、让某些人从系统里消失，而且不会留下证据。\n\n你第一反应更接近哪一种？",
     options: [
       {
-        text: "规则不是用来给会哭的人让路的。",
+        text: "既然这套系统本来就不干净，那就由我来摧毁和重建它。",
+        primary: "light",
+        scores: {
+          light: 2,
+          pain: 1
+        }
+      },
+      {
+        text: "我要让所有人知道，权限在我手里，让他们知道该信奉谁。",
+        primary: "homelander",
+        scores: {
+          homelander: 2,
+          light: 1
+        }
+      },
+      {
+        text: "把违反规则的人清除，一切都按照规则应有的样子运行。",
         primary: "anton",
         scores: {
           anton: 2,
@@ -122,221 +104,151 @@ const questions = [
         }
       },
       {
-        text: "如果所有人都不敢判，那我来判。",
-        primary: "light",
-        scores: {
-          light: 2,
-          anton: 1
-        }
-      },
-      {
-        text: "软弱不该成为免死金牌，做错就要付代价。",
-        primary: "pain",
-        scores: {
-          pain: 2,
-          light: 1
-        }
-      },
-      {
-        text: "我会记住他这一套，下次必要时也能派上用场。",
+        text: "判断自己的筹码和别人的价值，拼出一套只为我服务的计划。",
         primary: "tbag",
         scores: {
           tbag: 2,
+          plankton: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "失败后的最后一搏",
+    text: "你已经失败很多次了。计划被拆穿，努力被嘲笑，别人开始用轻蔑和嘲讽的眼神看你。你知道再来一次可能还是输，但如果停下来，他们的嘲笑和羞辱就成了正确答案。\n\n你会怎么选？",
+    options: [
+      {
+        text: "再坚持一次，我一定会用成功证明他们是错的。",
+        primary: "plankton",
+        scores: {
+          plankton: 2,
+          homelander: 1
+        }
+      },
+      {
+        text: "体面的办法赢不了，那我就换一种更脏但更快的办法。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
+          plankton: 1
+        }
+      },
+      {
+        text: "如果他们想把我逼疯，那我就先让他们消失。",
+        primary: "joker",
+        scores: {
+          joker: 2,
+          pain: 1
+        }
+      },
+      {
+        text: "把失败拆到最细，下一次用一次完美的胜利打他们耳光。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
           hannibal: 1
         }
       }
     ]
   },
   {
-    text: "你终于拿到了一个梦寐以求的机会，但这个机会要求你牺牲休息、关系和一些原本很珍贵的东西。别人提醒你不要太拼，可你知道这可能是翻身的入口。\n\n你更可能怎么想？",
+    title: "失控的瞬间",
+    text: "你原本以为自己可以控制住。那个人、那件事、那个念头，平时看起来已经被你压下去了，可它只要再次出现，你的理智就开始松动。你明明知道继续靠近会让自己变得难看、敏感、反复，甚至不像自己，可身体和情绪已经先一步往前走了。\n\n最可怕的不是你失控，而是你发现：有一部分你，其实一直在等它回来。\n\n你最真实的反应是？",
     options: [
       {
-        text: "能爬上去的人，没资格嫌路太冷。",
-        primary: "miranda",
+        text: "我知道它会毁掉我，可它回来那一刻，我才像真的活过来。",
+        primary: "gollum",
         scores: {
-          miranda: 2,
+          gollum: 2,
+          harley: 1
+        }
+      },
+      {
+        text: "我会把它抓紧一点，哪怕变得难看，也不能让它先属于别人。",
+        primary: "homelander",
+        scores: {
+          homelander: 2,
+          gollum: 1
+        }
+      },
+      {
+        text: "我不会急着反抗，我会弄懂它怎么诱惑我，再反过来驯服它。",
+        primary: "makima",
+        scores: {
+          makima: 2,
+          hannibal: 1
+        }
+      },
+      {
+        text: "我知道这很疯，但平淡地清醒着，比失控更像死掉。",
+        primary: "harley",
+        scores: {
+          harley: 2,
+          joker: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "有人求你放过他",
+    text: "你终于抓住了那个曾经伤害你的人。对方不再嚣张，甚至开始求你放过他。他说自己也有苦衷，说那时候没有选择。你看着他低头的样子，突然发现：现在规则在你手里。\n\n你会怎么做？",
+    options: [
+      {
+        text: "他当初越线的时候，结局就已经开始了。",
+        primary: "anton",
+        scores: {
+          anton: 2,
           light: 1
         }
       },
       {
-        text: "只要能证明我不是失败者，我可以再赌一次。",
-        primary: "plankton",
+        text: "我不用解释，我要让他亲自尝一遍。",
+        primary: "pain",
         scores: {
-          plankton: 2,
+          pain: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "我不急着毁掉他，我要让他知道结局在我手里。",
+        primary: "makima",
+        scores: {
+          makima: 2,
           tbag: 1
         }
       },
       {
-        text: "机会是给能承担代价的人，不是给犹豫的人。",
-        primary: "light",
+        text: "我不会失态，蠢人才会丢掉我给的机会。",
+        primary: "miranda",
         scores: {
-          light: 2,
-          miranda: 1
-        }
-      },
-      {
-        text: "我会先判断这个机会能不能让我活得更稳，而不是更好看。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          anton: 1
+          miranda: 2,
+          hannibal: 1
         }
       }
     ]
   },
   {
-    text: "你发现自己一直放不下某个人、某件事或某个目标。它让你痛苦，也让你反复回头。理智告诉你该走了，但情绪像一只手，把你拖回原地。\n\n你最像哪种状态？",
+    title: "被公开羞辱",
+    text: "那个人明明知道这是你的痛点，却还是用玩笑的语气把它说了出来。周围人笑了几声，又很快假装无事发生。对方还拍了拍你的肩，说“别这么敏感”。可你知道，被踩碎的不是面子，而是你给他们留下的最后一点底线。\n\n你内心最接近哪种反应？",
     options: [
       {
-        text: "我知道它在毁掉我，但没有它，我不知道自己是谁。",
-        primary: "gollum",
-        scores: {
-          gollum: 2,
-          harley: 1
-        }
-      },
-      {
-        text: "我可以离开，但我必须先让它知道我有多痛。",
+        text: "记住他们笑的样子，用直接暴力的方式毁掉他们。",
         primary: "joker",
         scores: {
           joker: 2,
-          gollum: 1
-        }
-      },
-      {
-        text: "我不想输给这段执念，所以我会继续证明自己。",
-        primary: "plankton",
-        scores: {
-          plankton: 2,
           homelander: 1
         }
       },
       {
-        text: "我会慢慢切断它对我的影响，但不会让自己看起来狼狈。",
+        text: "他暴露了自己的粗糙和低级，从此不值得我认真对待。",
         primary: "hannibal",
         scores: {
           hannibal: 2,
-          anton: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你被要求带一个能力很差但态度很好的新人。对方很努力，也很感激你，可他反复犯低级错误，拖慢进度，还让你不得不替他收拾残局。\n\n你最真实的想法是？",
-    options: [
-      {
-        text: "努力不是结果，态度也不能替代能力。",
-        primary: "miranda",
-        scores: {
-          miranda: 2,
-          anton: 1
-        }
-      },
-      {
-        text: "如果他听话，我可以教；如果不听话，就没有价值。",
-        primary: "makima",
-        scores: {
-          makima: 2,
           miranda: 1
         }
       },
       {
-        text: "我会看清他的弱点，再决定他适合被放在哪里。",
-        primary: "hannibal",
-        scores: {
-          hannibal: 2,
-          makima: 1
-        }
-      },
-      {
-        text: "我会让他知道，拖累别人也是一种错误。",
-        primary: "light",
-        scores: {
-          light: 2,
-          miranda: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你站在一个混乱的房间里。所有人都在吵，每个人都说自己有理。规则、情感、利益、旧账搅在一起，没有人愿意停下来听别人说完。\n\n你更想做什么？",
-    options: [
-      {
-        text: "把混乱推到极致，让他们看清这套体面本来就很烂。",
-        primary: "joker",
-        scores: {
-          joker: 2,
-          pain: 1
-        }
-      },
-      {
-        text: "建立一个不能被情绪打断的规则，然后照规则处理。",
-        primary: "anton",
-        scores: {
-          anton: 2,
-          light: 1
-        }
-      },
-      {
-        text: "找到所有人真正害怕失去的东西，局面自然会安静。",
-        primary: "makima",
-        scores: {
-          makima: 2,
-          hannibal: 1
-        }
-      },
-      {
-        text: "让他们都尝一遍后果，光讲道理没人会记住。",
-        primary: "pain",
-        scores: {
-          pain: 2,
-          joker: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "如果你拥有一种没人能制约你的力量，你最担心自己会变成什么样？",
-    options: [
-      {
-        text: "我会越来越需要所有人认可我、崇拜我、不能离开我。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          makima: 1
-        }
-      },
-      {
-        text: "我会开始相信，既然我更聪明，那我就更有资格决定一切。",
-        primary: "light",
-        scores: {
-          light: 2,
-          hannibal: 1
-        }
-      },
-      {
-        text: "我会把惩罚包装成必要代价，甚至觉得自己在拯救世界。",
-        primary: "pain",
-        scores: {
-          pain: 2,
-          light: 1
-        }
-      },
-      {
-        text: "我会不再解释，只让规则和结果替我说话。",
-        primary: "anton",
-        scores: {
-          anton: 2,
-          miranda: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你很讨厌一种人：他们看起来体面、正确、讲道理，但其实从来没有真正理解过你的痛苦。他们会劝你放下，却没有承受过你承受的东西。\n\n你最想对他们说什么？",
-    options: [
-      {
-        text: "没痛过的人，别急着教我怎么善良。",
+        text: "他们不是体面，只是还没轮到自己被踩到痛处。",
         primary: "pain",
         scores: {
           pain: 2,
@@ -344,36 +256,97 @@ const questions = [
         }
       },
       {
-        text: "你们不是理性，你们只是站在安全的地方说漂亮话。",
-        primary: "joker",
-        scores: {
-          joker: 2,
-          pain: 1
-        }
-      },
-      {
-        text: "理解痛苦不靠安慰，靠让他们亲自看见代价。",
-        primary: "anton",
-        scores: {
-          anton: 2,
-          pain: 1
-        }
-      },
-      {
-        text: "他们的话不重要，重要的是谁能在这套局里活下来。",
+        text: "我会笑过去，但这笔账会留下，等一个最合适的时机刺回来。",
         primary: "tbag",
         scores: {
           tbag: 2,
-          joker: 1
+          anton: 1
         }
       }
     ]
   },
   {
-    text: "你喜欢一个人时，最容易掉进哪种危险？",
+    title: "有人开始不听你的",
+    text: "你带着一群人往前走，局面本来在你的掌控里。可最近，有个人开始质疑你的判断，还影响了其他人。他说自己只是提建议，但你能感觉到，那不是建议，是你的权威正在被松动。\n\n你第一反应是什么？",
     options: [
       {
-        text: "我会把对方变成世界中心，对方一冷我就失控。",
+        text: "我要让所有人重新知道，谁才是不可替代的。",
+        primary: "homelander",
+        scores: {
+          homelander: 2,
+          light: 1
+        }
+      },
+      {
+        text: "我会先看懂他为什么动摇，再决定怎么处理。",
+        primary: "hannibal",
+        scores: {
+          hannibal: 2,
+          makima: 1
+        }
+      },
+      {
+        text: "可以质疑，但越线就要承担后果。",
+        primary: "anton",
+        scores: {
+          anton: 2,
+          miranda: 1
+        }
+      },
+      {
+        text: "我会先看他和谁走得近，再决定拉拢还是处理。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
+          makima: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "你听见背后的评价",
+    text: "你无意间听见他们在背后谈起你。那些话不算特别恶毒，却很轻浮，很随便，像是只把你当做增进感情的工具。最刺痛你的不是他们看不起你，而是他们说这些话时那么自然，好像没把你当成人一样。\n\n你会怎么反应？",
+    options: [
+      {
+        text: "我要迅速让他们重新知道，取笑我是多惨痛的代价。",
+        primary: "homelander",
+        scores: {
+          homelander: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "既然他们这么爱聊，就让他们尝尝张不开口的滋味。",
+        primary: "joker",
+        scores: {
+          joker: 2,
+          pain: 1
+        }
+      },
+      {
+        text: "记住谁说了什么，谁附和了，谁装作没听见。算清局势。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
+          hannibal: 1
+        }
+      },
+      {
+        text: "我会把他们从心里降级，一群轻浮的人不配让我解释。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
+          hannibal: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "被偏爱的那个人",
+    text: "你看见一个人被轻易偏爱。别人会主动等他、替他解释、给他机会，甚至在他犯错时也愿意说“他不是故意的”。而你很清楚，换成你，必须表现得足够好、足够有用、足够懂事，才可能换来一点类似的待遇。最刺痛你的不是他得到了什么，而是他好像从来不需要证明自己值得。\n\n你最接近哪种反应？",
+    options: [
+      {
+        text: "我会很想被那样选一次，不用懂事、不用证明，也有人偏向我。",
         primary: "harley",
         scores: {
           harley: 2,
@@ -381,15 +354,45 @@ const questions = [
         }
       },
       {
-        text: "我会想给对方想要的一切，然后让他越来越离不开我。",
-        primary: "makima",
+        text: "我会憋着这口气。总有一天，我要让他们知道自己偏爱错了人。",
+        primary: "plankton",
         scores: {
-          makima: 2,
-          harley: 1
+          plankton: 2,
+          pain: 1
         }
       },
       {
-        text: "我会抓得太紧，明知道痛也舍不得松手。",
+        text: "我会观察他怎么得到这些，再学会让别人也这样对我。",
+        primary: "makima",
+        scores: {
+          makima: 2,
+          hannibal: 1
+        }
+      },
+      {
+        text: "我会冷下来。靠偏爱活着的人，迟早会让自己一无是处。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
+          light: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "你发现他变成了另一个人",
+    text: "你曾经很了解一个人。你知道他的习惯、软肋、说谎时的小动作，也知道他什么时候会需要你。可现在，他站在你面前，说着很陌生的话，做着你预判不了的选择。他没有背叛你，只是突然变成了一个不再由你理解的人。\n\n你最接近哪种反应？",
+    options: [
+      {
+        text: "我会重新读他，看看他的欲望换到了哪里。",
+        primary: "hannibal",
+        scores: {
+          hannibal: 2,
+          makima: 1
+        }
+      },
+      {
+        text: "为什么只有我还抓着过去的那个他不放？",
         primary: "gollum",
         scores: {
           gollum: 2,
@@ -397,480 +400,409 @@ const questions = [
         }
       },
       {
-        text: "我会看穿对方的软肋，却不一定愿意放过那些软肋。",
+        text: "我会拉开距离，无法预测的人不该占据核心。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
+          hannibal: 1
+        }
+      },
+      {
+        text: "我会让他想起，谁最懂他，也最能影响他。",
+        primary: "makima",
+        scores: {
+          makima: 2,
+          homelander: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "黑暗交易",
+    text: "如果有一次翻身机会摆在你面前，但它一定要拿走你身上的某样东西，你最可能接受哪一种交换？",
+    options: [
+      {
+        text: "用一段关系的平等，换对方再也离不开你。",
+        primary: "makima",
+        scores: {
+          makima: 2,
+          homelander: 1
+        }
+      },
+      {
+        text: "用现在的体面，换一次让所有人闭嘴的胜利。",
+        primary: "plankton",
+        scores: {
+          plankton: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "用别人的安全感，换一套更有效、更听话的秩序。",
+        primary: "light",
+        scores: {
+          light: 2,
+          anton: 1
+        }
+      },
+      {
+        text: "用一点良心，换在任何局面里都能如鱼得水的本事。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
+          miranda: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "你知道正确答案，但没人听",
+    text: "你已经看出问题在哪里，也知道怎么处理最快、最有效。可会议室里的人还在讨论流程、风险、感受和影响。他们说你太急、太狠、太不近人情。你看着他们争论，忽然觉得他们不是善良，只是没有能力承担正确答案。\n\n你最接近哪种想法？",
+    options: [
+      {
+        text: "他们不敢做决定，那决定权就该交给我。",
+        primary: "light",
+        scores: {
+          light: 2,
+          miranda: 1
+        }
+      },
+      {
+        text: "越是有人求情，越要守住边界。",
+        primary: "anton",
+        scores: {
+          anton: 2,
+          light: 1
+        }
+      },
+      {
+        text: "我会等他们走进死路，再让他们回来求我的答案。",
+        primary: "makima",
+        scores: {
+          makima: 2,
+          hannibal: 1
+        }
+      },
+      {
+        text: "轮到他们承担代价时，才突然开始谈人性。",
+        primary: "pain",
+        scores: {
+          pain: 2,
+          joker: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "看见高处的人崩溃",
+    text: "那个人曾经总是站在高处评价你。他体面、稳定、正确，像从来不会出错。你也曾经解释过、忍过、低头过，可他从来没有真正把你当回事。现在他在你面前崩溃，语无伦次地解释，求你别把这件事说出去。你突然发现：原来他也会害怕，也会狼狈，也会终于轮到自己求别人放过。\n\n你第一反应是？",
+    options: [
+      {
+        text: "人快藏不住的时候，才最真实。",
         primary: "hannibal",
         scores: {
           hannibal: 2,
+          makima: 1
+        }
+      },
+      {
+        text: "痛苦才会让你长出记性，并且回到正轨。",
+        primary: "pain",
+        scores: {
+          pain: 2,
+          anton: 1
+        }
+      },
+      {
+        text: "原来他也只是一个包装得很好的普通人。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
+          light: 1
+        }
+      },
+      {
+        text: "站在他的痛点安慰他，他欠我的人情会很有用。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
           makima: 1
         }
       }
     ]
   },
   {
-    text: "你正在竞争一个位置。对手比你更受欢迎，资源更多，人缘也更好。你知道自己不比他差，但现实就是所有优势都在他那里。\n\n你会怎么处理这种不甘？",
+    title: "你终于赢了一次",
+    text: "你终于赢了。那个一直压着你、笑你、看轻你的人，这一次被你踩在脚下。周围人开始看向你，语气也变了。你忽然意识到，胜利不只是结果，它还能让人重新定义你是谁。\n\n你最真实的感觉是？",
     options: [
       {
-        text: "我会反复尝试，失败多少次都不能说明我该放弃。",
+        text: "我要让他们知道，曾经的嘲笑有多愚蠢。",
         primary: "plankton",
         scores: {
           plankton: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "我要让他们记住这次抬头看我的感觉。",
+        primary: "homelander",
+        scores: {
+          homelander: 2,
+          plankton: 1
+        }
+      },
+      {
+        text: "我会复盘赢在哪里，把它变成继续赢的系统。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
+          light: 1
+        }
+      },
+      {
+        text: "我不沉迷赢，我只在意它证明了哪条规则。",
+        primary: "anton",
+        scores: {
+          anton: 2,
+          hannibal: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "你被一个温柔的人接住",
+    text: "你已经很久没有相信别人了。可有个人没有急着评价你，也没有逼你变好，只是很安静地陪你走了一段。你知道自己不该贪心，但那种被接住的感觉太陌生了，陌生到你甚至开始害怕。\n\n你会怎么办？",
+    options: [
+      {
+        text: "我想靠近，可一旦依赖，我怕自己再也离不开。",
+        primary: "gollum",
+        scores: {
+          gollum: 2,
+          homelander: 1
+        }
+      },
+      {
+        text: "他一对我好，我就想为他做点疯狂的事。",
+        primary: "harley",
+        scores: {
+          harley: 2,
+          gollum: 1
+        }
+      },
+      {
+        text: "越温柔的东西，越可能让人失去判断。",
+        primary: "hannibal",
+        scores: {
+          hannibal: 2,
+          miranda: 1
+        }
+      },
+      {
+        text: "我会试探他能不能接受真正难看的我。",
+        primary: "joker",
+        scores: {
+          joker: 2,
+          harley: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "有人背叛了你",
+    text: "你发现一个你信任过的人背叛了你。他不是完全没有理由，甚至可以说他也有自己的苦衷。可你看着证据摆在面前，心里最清楚的一点是：他知道这样会伤到你，但还是做了。\n\n你会怎么处理？",
+    options: [
+      {
+        text: "我不听解释了，背叛之前他就该想清楚。",
+        primary: "pain",
+        scores: {
+          pain: 2,
+          anton: 1
+        }
+      },
+      {
+        text: "我会切断，可还是想知道我到底重不重要。",
+        primary: "harley",
+        scores: {
+          harley: 2,
+          homelander: 1
+        }
+      },
+      {
+        text: "我会装作不知道，等他把底牌全露出来。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
+          makima: 1
+        }
+      },
+      {
+        text: "我会一边恨他，一边想他背叛时有没有犹豫。",
+        primary: "gollum",
+        scores: {
+          gollum: 2,
+          harley: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "他们用规则把你关进笼子",
+    text: "有个人一直用规则、道德、责任或者“为你好”来压你。老板说这是职场规矩，老师说这是你的义务，家人说你不该这么自私。他们把你的反抗说成不懂事，把你的边界说成冷漠，把你的愤怒说成太极端。你越解释，他们越像站在高处审判你。\n\n某一刻，你突然意识到：他们不是在讲道理，他们是在把你关进一个看起来正确的笼子。\n\n你会怎么反应？",
+    options: [
+      {
+        text: "如果规则只是用来关住我，那我就亲手把它拆掉。",
+        primary: "pain",
+        scores: {
+          pain: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "我会找到规则真正的缝，再用它做一个让他们逃不出去的局。",
+        primary: "tbag",
+        scores: {
+          tbag: 2,
+          plankton: 1
+        }
+      },
+      {
+        text: "他们越想审判我，我越要证明决定权不该在他们手里。",
+        primary: "light",
+        scores: {
+          light: 2,
+          homelander: 1
+        }
+      },
+      {
+        text: "我不会吵。我会划出新的线，从此谁越线，谁承担后果。",
+        primary: "anton",
+        scores: {
+          anton: 2,
+          miranda: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "反派道具",
+    text: "深夜，你走进一间没有窗的房间。桌上放着四样东西，每一样都像在等你伸手。你知道它们不干净，但也知道，只要拿起其中一样，你就能得到某种一直缺失的力量。\n\n你最先看向哪一样？",
+    options: [
+      {
+        text: "一枚能让所有人都臣服于你的徽章。",
+        primary: "plankton",
+        scores: {
+          plankton: 2,
+          homelander: 1
+        }
+      },
+      {
+        text: "一份能重新定义正确的清单。",
+        primary: "light",
+        scores: {
+          light: 2,
+          anton: 1
+        }
+      },
+      {
+        text: "一条能让某个人心甘情愿回来的细链。",
+        primary: "makima",
+        scores: {
+          makima: 2,
+          harley: 1
+        }
+      },
+      {
+        text: "一个装着自己执念的宝盒。",
+        primary: "gollum",
+        scores: {
+          gollum: 2,
+          harley: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "你发现自己被利用了",
+    text: "你回头才发现，自己一直在替别人完成他的计划。你以为自己是被信任、被需要、被特殊对待，结果只是因为你刚好好用。最刺痛你的不是损失，而是你曾经真心相信过那份特殊。\n\n你第一反应是？",
+    options: [
+      {
+        text: "利用我可以，但不能让我觉得自己像个笑话。",
+        primary: "homelander",
+        scores: {
+          homelander: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "我会拆开这段关系，学会以后怎么利用别人。",
+        primary: "makima",
+        scores: {
+          makima: 2,
           tbag: 1
         }
       },
       {
-        text: "我会找到他最依赖的资源，然后让优势变成弱点。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          light: 1
-        }
-      },
-      {
-        text: "我会用更高标准碾过去，让喜欢不再重要。",
-        primary: "miranda",
-        scores: {
-          miranda: 2,
-          homelander: 1
-        }
-      },
-      {
-        text: "我会让所有人看见，他被捧上去只是因为没人拆穿。",
-        primary: "joker",
-        scores: {
-          joker: 2,
-          plankton: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "一个人向你求助。他很脆弱、很依赖你，也明显把你当成唯一的救命稻草。你知道自己可以帮他，也知道这种依赖会让你拥有很大影响力。\n\n你心里最危险的念头是？",
-    options: [
-      {
-        text: "只要他听话，我可以给他想要的安全感。",
-        primary: "makima",
-        scores: {
-          makima: 2,
-          homelander: 1
-        }
-      },
-      {
-        text: "他会把我当成特别的人，这种感觉很难拒绝。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          makima: 1
-        }
-      },
-      {
-        text: "我能看见他为什么会这样，也能看见怎么让他更暴露。",
+        text: "我早该想到，人本来就不值得轻易相信。",
         primary: "hannibal",
         scores: {
           hannibal: 2,
-          makima: 1
-        }
-      },
-      {
-        text: "如果他有用，我会留下他；如果只会拖累，就算了。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          miranda: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你被人公开羞辱了。对方用玩笑的方式让全场都笑起来，好像只要大家都笑，你就不能认真生气。那一刻你感到自己被放在台上消费。\n\n你最接近哪种反应？",
-    options: [
-      {
-        text: "那我就把这场玩笑变成所有人的噩梦。",
-        primary: "joker",
-        scores: {
-          joker: 2,
-          homelander: 1
-        }
-      },
-      {
-        text: "我会记住这笔账，等他最放松的时候再还。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
           anton: 1
         }
       },
       {
-        text: "我会用更漂亮的方式让他知道，谁才是低级的那个。",
-        primary: "hannibal",
-        scores: {
-          hannibal: 2,
-          miranda: 1
-        }
-      },
-      {
-        text: "他让我痛，我会让他也明白什么叫痛。",
-        primary: "pain",
-        scores: {
-          pain: 2,
-          joker: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你最害怕别人怎么看你？",
-    options: [
-      {
-        text: "他们觉得我没那么重要，随时可以被替代。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          plankton: 1
-        }
-      },
-      {
-        text: "他们觉得我只是个失败者，努力也很可笑。",
-        primary: "plankton",
-        scores: {
-          plankton: 2,
-          joker: 1
-        }
-      },
-      {
-        text: "他们觉得我很好操控，只要给点爱我就会失去边界。",
-        primary: "harley",
-        scores: {
-          harley: 2,
-          gollum: 1
-        }
-      },
-      {
-        text: "他们觉得我其实没有那么聪明，只是在装清醒。",
-        primary: "light",
-        scores: {
-          light: 2,
-          hannibal: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "如果一段关系让你痛苦，但也让你感到强烈、特别、被需要，你更可能怎么解释它？",
-    options: [
-      {
-        text: "越痛越说明它不是普通关系，我很难说走就走。",
-        primary: "harley",
-        scores: {
-          harley: 2,
-          gollum: 1
-        }
-      },
-      {
-        text: "我知道它有毒，但它已经像我的一部分。",
+        text: "我恨他，也恨自己还想要一个解释。",
         primary: "gollum",
         scores: {
           gollum: 2,
           harley: 1
         }
-      },
-      {
-        text: "如果我能控制节奏，它就不会再伤到我。",
-        primary: "makima",
-        scores: {
-          makima: 2,
-          homelander: 1
-        }
-      },
-      {
-        text: "痛苦会暴露真实的人，关系也是一种审讯。",
-        primary: "hannibal",
-        scores: {
-          hannibal: 2,
-          anton: 1
-        }
       }
     ]
   },
   {
-    text: "你面对一个腐烂的系统。里面的人彼此包庇、低效、虚伪，却还能继续运转。你知道小修小补没用，但真正推翻它会伤到很多人。\n\n你更接近哪种选择？",
+    title: "你面对一个弱者",
+    text: "一个明显比你弱的人挡在你面前。他没有太多筹码，也没有真正伤害你的能力，但他偏偏不肯退开，还用一种很坚定的眼神看着你。你知道只要你愿意，可以很轻松地让他闭嘴。\n\n你会怎么做？",
     options: [
       {
-        text: "如果系统烂到骨子里，就需要一个更强的人重新定义它。",
-        primary: "light",
+        text: "我会先听他说完，他一定有不能再退的东西。",
+        primary: "hannibal",
         scores: {
-          light: 2,
+          hannibal: 2,
           pain: 1
         }
       },
       {
-        text: "让它也感受一次自己制造出来的痛，它才会记住。",
-        primary: "pain",
+        text: "弱者凭什么用这种眼神审判我？",
+        primary: "homelander",
         scores: {
-          pain: 2,
-          joker: 1
+          homelander: 2,
+          light: 1
         }
       },
       {
-        text: "我会找出系统真正的运行规则，再从规则缝隙里下手。",
-        primary: "anton",
+        text: "我会问清楚他为什么不退，固执也可能有用。",
+        primary: "makima",
         scores: {
-          anton: 2,
+          makima: 2,
           tbag: 1
         }
       },
       {
-        text: "我不想修好它，我想让所有人看见它本来就很荒唐。",
-        primary: "joker",
-        scores: {
-          joker: 2,
-          light: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "别人评价你太冷、太现实、太不近人情。你听到后，第一反应更像哪一句？",
-    options: [
-      {
-        text: "不是我冷，是他们对结果没有敬畏。",
-        primary: "miranda",
-        scores: {
-          miranda: 2,
-          anton: 1
-        }
-      },
-      {
-        text: "世界本来就不会因为你可怜而放过你。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          miranda: 1
-        }
-      },
-      {
-        text: "我只是比他们更早接受了规则。",
+        text: "强弱不重要，越线就是越线。",
         primary: "anton",
         scores: {
           anton: 2,
-          hannibal: 1
-        }
-      },
-      {
-        text: "他们把清醒叫冷漠，是因为他们还不够清醒。",
-        primary: "hannibal",
-        scores: {
-          hannibal: 2,
-          light: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你终于赢了一次。那个曾经看不起你的人沉默了，周围人也开始重新评价你。但胜利结束后，你发现自己并没有想象中那么满足。\n\n你最可能意识到什么？",
-    options: [
-      {
-        text: "我想要的不是赢一次，而是永远不再被忽视。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          plankton: 1
-        }
-      },
-      {
-        text: "我证明了自己，却还想继续证明给更多人看。",
-        primary: "plankton",
-        scores: {
-          plankton: 2,
-          light: 1
-        }
-      },
-      {
-        text: "胜利没有意义，除非它能改变别人看我的方式。",
-        primary: "joker",
-        scores: {
-          joker: 2,
-          homelander: 1
-        }
-      },
-      {
-        text: "赢只是开始，真正重要的是以后规则由谁制定。",
-        primary: "light",
-        scores: {
-          light: 2,
           miranda: 1
         }
       }
     ]
   },
   {
-    text: "你最不能忍受哪种亲密关系？",
+    title: "他们终于开始谈公平",
+    text: "你曾经在一套规则里吃过很大的亏。那时候没人听你解释，也没人愿意停下来理解你的痛。现在，同一批人终于开始谈公平、谈体面、谈不要把事情做绝。你看着他们，突然觉得很讽刺：原来只有轮到他们痛的时候，世界才开始讲道理。\n\n你最接近哪种反应？",
     options: [
       {
-        text: "对方嘴上说爱我，却不肯把我放在第一位。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          harley: 1
-        }
-      },
-      {
-        text: "对方让我上头，却一直让我怀疑自己是不是被爱。",
-        primary: "harley",
-        scores: {
-          harley: 2,
-          gollum: 1
-        }
-      },
-      {
-        text: "对方明明依赖我，却还想保留太多不属于我的空间。",
-        primary: "makima",
-        scores: {
-          makima: 2,
-          homelander: 1
-        }
-      },
-      {
-        text: "对方让我觉得自己正在一点点变得不像自己。",
-        primary: "gollum",
-        scores: {
-          gollum: 2,
-          makima: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你有一个秘密计划。这个计划不一定体面，但如果成功，你可以摆脱现在的困境，甚至彻底翻身。唯一的问题是，它可能会利用一些信任你的人。\n\n你会怎么想？",
-    options: [
-      {
-        text: "如果我不先活下来，谈什么良心都是空的。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          plankton: 1
-        }
-      },
-      {
-        text: "只要最后能成功，现在难看一点也没关系。",
-        primary: "plankton",
-        scores: {
-          plankton: 2,
-          tbag: 1
-        }
-      },
-      {
-        text: "我会把伤害控制在必要范围内，但计划必须完成。",
-        primary: "light",
-        scores: {
-          light: 2,
-          anton: 1
-        }
-      },
-      {
-        text: "只要他们愿意相信我，就说明他们本来就可以被引导。",
-        primary: "makima",
-        scores: {
-          makima: 2,
-          hannibal: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你突然获得一次窥见别人真实内心的机会。你能看见他们的恐惧、欲望、羞耻、谎言和脆弱。没有人知道你看见了。\n\n你最可能怎么使用这种能力？",
-    options: [
-      {
-        text: "我会更清楚谁值得靠近，谁只是一具精致外壳。",
-        primary: "hannibal",
-        scores: {
-          hannibal: 2,
-          miranda: 1
-        }
-      },
-      {
-        text: "我会给他们刚好想要的东西，让他们主动靠过来。",
-        primary: "makima",
-        scores: {
-          makima: 2,
-          hannibal: 1
-        }
-      },
-      {
-        text: "我会判断谁有罪、谁虚伪、谁应该被纠正。",
-        primary: "light",
-        scores: {
-          light: 2,
-          anton: 1
-        }
-      },
-      {
-        text: "我会找到能让我脱身或翻盘的筹码。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          makima: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "你走到人生低谷。没人看好你，计划失败，关系破碎，连你自己也开始怀疑是不是一直在自我欺骗。\n\n最能把你重新拉起来的是什么？",
-    options: [
-      {
-        text: "我不能就这样被他们定义，我必须让他们重新看见我。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          joker: 1
-        }
-      },
-      {
-        text: "哪怕只剩我一个人，我也要再试一次。",
-        primary: "plankton",
-        scores: {
-          plankton: 2,
-          gollum: 1
-        }
-      },
-      {
-        text: "我会把这次痛苦整理成答案，不让它白白发生。",
-        primary: "pain",
-        scores: {
-          pain: 2,
-          light: 1
-        }
-      },
-      {
-        text: "我会先活下来，再决定该相信谁、报复谁、利用谁。",
-        primary: "tbag",
-        scores: {
-          tbag: 2,
-          anton: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "如果你的黑暗面最终失控，它最可能以哪种方式伤害别人？",
-    options: [
-      {
-        text: "我会要求别人不断证明爱我，不证明就惩罚。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          harley: 1
-        }
-      },
-      {
-        text: "我会用正确、规则或标准压到别人喘不过气。",
-        primary: "miranda",
-        scores: {
-          miranda: 2,
-          anton: 1
-        }
-      },
-      {
-        text: "我会把自己受过的痛变成让别人也痛的理由。",
+        text: "我要让他们也尝尝无处申诉是什么滋味。",
         primary: "pain",
         scores: {
           pain: 2,
@@ -878,28 +810,15 @@ const questions = [
         }
       },
       {
-        text: "我会抓住一个执念不放，最后把自己和别人都拖进去。",
-        primary: "gollum",
+        text: "以前没人给我例外，现在也不该有人要例外。",
+        primary: "anton",
         scores: {
-          gollum: 2,
-          plankton: 1
-        }
-      }
-    ]
-  },
-  {
-    text: "最后一幕，你站在镜子前，看见自己最不愿承认的那一面。它不是完全邪恶，也不是完全无辜，只是一直在你心里等一个机会。\n\n你最不愿承认的是？",
-    options: [
-      {
-        text: "我想被爱到像被供奉一样，不然就觉得自己会消失。",
-        primary: "homelander",
-        scores: {
-          homelander: 2,
-          makima: 1
+          anton: 2,
+          pain: 1
         }
       },
       {
-        text: "我有时真的想让世界为它对我的冷漠付出代价。",
+        text: "我要把这件事摊开，让所有人看见系统怎么吞人。",
         primary: "joker",
         scores: {
           joker: 2,
@@ -907,19 +826,87 @@ const questions = [
         }
       },
       {
-        text: "我并不只是想做好事，我也想成为唯一正确的人。",
+        text: "我会借这次机会，把规则改到他们再也逃不掉。",
         primary: "light",
         scores: {
           light: 2,
-          hannibal: 1
+          miranda: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "镜子里的反派",
+    text: "你站在镜子前，突然发现自己已经和以前不太一样了。不是外表变了，而是某些眼神、姿态和念头开始变得危险。你没有立刻害怕，反而有一点陌生的平静：也许这部分你一直都在，只是现在终于不想藏了。\n\n你最先注意到什么？",
+    options: [
+      {
+        text: "眼神里那股荒唐的野心：越没人把我当回事，我越想站到所有人头上。",
+        primary: "plankton",
+        scores: {
+          plankton: 2,
+          light: 1
         }
       },
       {
-        text: "我害怕松手，因为有些执念已经被我误认成了自己。",
+        text: "嘴角那种快要笑出来的报复感。",
+        primary: "joker",
+        scores: {
+          joker: 2,
+          pain: 1
+        }
+      },
+      {
+        text: "心里还放不下的那份执念。",
         primary: "gollum",
         scores: {
           gollum: 2,
           harley: 1
+        }
+      },
+      {
+        text: "脸上那种冷静到几乎不近人情的判断。",
+        primary: "miranda",
+        scores: {
+          miranda: 2,
+          hannibal: 1
+        }
+      }
+    ]
+  },
+  {
+    title: "你完成了你的计划",
+    text: "事情结束后，一切都安静了下来。人群散了，掌声没了，争吵也停了。你完成了你实施了很久的计划。但你也意识到，为了走到这里，你已经失去了很多。\n\n你会有什么反应？",
+    options: [
+      {
+        text: "站到更高处。既然我证明了自己的判断，接下来就该由我决定这座城市怎么运转。",
+        primary: "light",
+        scores: {
+          light: 2,
+          plankton: 1
+        }
+      },
+      {
+        text: "紧紧守护这个成果，哪怕让我失去了太多，我也要拥有它。",
+        primary: "gollum",
+        scores: {
+          gollum: 2,
+          harley: 1
+        }
+      },
+      {
+        text: "我会笑得很夸张。失败了那么多次，终于有一次轮到世界承认我的计划成功了。",
+        primary: "plankton",
+        scores: {
+          plankton: 2,
+          joker: 1
+        }
+      },
+      {
+        text: "我会突然笑出来。都走到这一步了，痛一点、疯一点，也算我真的活过。",
+        primary: "harley",
+        scores: {
+          harley: 2,
+          joker: 1
         }
       }
     ]
