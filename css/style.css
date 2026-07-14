@@ -1661,3 +1661,10 @@ button {
     line-height: 1.4;
   }
 }
+
+
+/* 去除截图保存功能 */
+#shareBtn,
+#shareModal {
+  display: none !important;
+}
