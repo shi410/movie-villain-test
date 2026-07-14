@@ -160,9 +160,7 @@ const sceneNames = [
   "第二十四幕"
 ];
 
-const questionStageText = Array.from(questionPage.querySelectorAll("*")).find(item => {
-  return item.textContent.trim() === "第一幕";
-});
+let questionStageText = null;
 
 const homePage = document.getElementById("homePage");
 const introPage = document.getElementById("introPage");
@@ -306,6 +304,12 @@ function loadQuestion() {
   questionText.textContent = q.text;
   const sceneName = sceneNames[currentQuestion] || `第${currentQuestion + 1}幕`;
   const questionTitle = q.title || questionTitles[currentQuestion] || "";
+
+  if (!questionStageText) {
+    questionStageText = Array.from(questionPage.querySelectorAll("*")).find(item => {
+      return item.textContent.trim() === "第一幕";
+    });
+  }
 
   if (questionStageText) {
     questionStageText.textContent = questionTitle
