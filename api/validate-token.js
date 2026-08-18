@@ -22,8 +22,23 @@ export default async function handler(req, res) {
   }
 
   if (data[0].used) {
-    return res.status(403).json({ valid: false, message: "该链接已使用。" });
+    if (data[0].result_type) {
+      return res.status(200).json({
+        valid: true,
+        completed: true,
+        resultType: data[0].result_type,
+        resultData: data[0].result_data
+      });
+    }
+
+    return res.status(403).json({
+      valid: false,
+      message: "该链接已使用，但未找到历史测试结果。"
+    });
   }
 
-  return res.status(200).json({ valid: true });
+  return res.status(200).json({
+    valid: true,
+    completed: false
+  });
 }

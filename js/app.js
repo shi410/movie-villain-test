@@ -258,6 +258,38 @@ async function validateToken() {
       showError(data.message || "链接无效或已使用。");
       return;
     }
+
+    if (data.completed && data.resultType) {
+      const personality = results[data.resultType];
+
+      if (!personality) {
+        showError("历史测试结果读取失败，请联系客服。");
+        return;
+      }
+
+      if (data.resultData) {
+        Object.keys(score).forEach(id => {
+          score[id] = data.resultData.score?.[id] || 0;
+        });
+
+        Object.keys(primaryHits).forEach(id => {
+          primaryHits[id] = data.resultData.primaryHits?.[id] || 0;
+        });
+
+        primaryHistory.length = 0;
+
+        if (Array.isArray(data.resultData.primaryHistory)) {
+          primaryHistory.push(...data.resultData.primaryHistory);
+        }
+      }
+
+      currentPersonality = personality;
+      tokenUsed = true;
+
+      renderResult(personality);
+      showPage(resultPage);
+      return;
+    }
   } catch (err) {
     showError("链接验证失败，请稍后重试。");
   }
@@ -389,7 +421,15 @@ async function markTokenUsed() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ token: currentToken })
+      body: JSON.stringify({
+        token: currentToken,
+        resultType: currentPersonality.id,
+        resultData: {
+          score: score,
+          primaryHits: primaryHits,
+          primaryHistory: primaryHistory
+        }
+      })
     });
 
     const data = await res.json();
