@@ -20,6 +20,31 @@
       <p id="statusText" class="subtitle"></p>
 
       <textarea id="linksOutput" class="links-output" readonly></textarea>
+
+      <hr />
+
+      <h2>公共授权通道</h2>
+      <p class="subtitle">固定授权码，不限人数，不限次数，可随时开启或关闭</p>
+
+      <input
+        id="adminSecretInput"
+        class="admin-input"
+        type="password"
+        placeholder="请输入管理员密码"
+      />
+
+      <input
+        id="publicAccessCodeInput"
+        class="admin-input"
+        type="text"
+        placeholder="固定授权码"
+      />
+
+      <button id="loadPublicAccessBtn" class="btn light">读取当前配置</button>
+      <button id="updatePublicAccessCodeBtn" class="btn light">修改授权码</button>
+      <button id="togglePublicAccessBtn" class="btn red">开启公共通道</button>
+
+      <p id="publicAccessStatusText" class="subtitle">当前状态：未读取</p>
     </section>
   </main>
 

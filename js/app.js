@@ -3,6 +3,7 @@ let userAnswers = new Array(questions.length).fill(null);
 let currentToken = null;
 let tokenUsed = false;
 let currentPersonality = null;
+let publicAccessMode = false;
 
 const personalityOrder = [
   "homelander",
@@ -246,8 +247,38 @@ async function validateToken() {
   currentToken = params.get("token");
 
   if (!currentToken) {
-    showError("请使用购买后获得的专属链接进入测试。");
-    return;
+    const publicAccessCode = sessionStorage.getItem("publicAccessCode");
+
+    if (!publicAccessCode) {
+      showError("请使用购买后获得的专属链接，或通过公共授权入口进入测试。");
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/validate-access-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          accessCode: publicAccessCode
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        sessionStorage.removeItem("publicAccessCode");
+        showError(data.message || "公共授权已失效。");
+        return;
+      }
+
+      publicAccessMode = true;
+      return;
+    } catch (err) {
+      showError("公共授权验证失败，请稍后重试。");
+      return;
+    }
   }
 
   try {
@@ -965,11 +996,85 @@ function closeModal(modal) {
   document.body.classList.remove("modal-open");
 }
 
-startBtn.onclick = () => {
-  showPage(introPage);
+startBtn.onclick = async () => {
+  if (!publicAccessMode) {
+    showPage(introPage);
+    return;
+  }
+
+  const publicAccessCode = sessionStorage.getItem("publicAccessCode");
+
+  if (!publicAccessCode) {
+    showError("公共授权已失效，请重新通过授权入口进入测试。");
+    return;
+  }
+
+  startBtn.disabled = true;
+
+  try {
+    const res = await fetch("/api/validate-access-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        accessCode: publicAccessCode
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+      sessionStorage.removeItem("publicAccessCode");
+      showError(data.message || "公共授权已失效。");
+      return;
+    }
+
+    showPage(introPage);
+  } catch (err) {
+    showError("公共授权验证失败，请稍后重试。");
+  } finally {
+    startBtn.disabled = false;
+  }
 };
 
-enterBtn.onclick = () => {
+enterBtn.onclick = async () => {
+  if (publicAccessMode) {
+    const publicAccessCode = sessionStorage.getItem("publicAccessCode");
+
+    if (!publicAccessCode) {
+      showError("公共授权已失效，请重新通过授权入口进入测试。");
+      return;
+    }
+
+    enterBtn.disabled = true;
+
+    try {
+      const res = await fetch("/api/validate-access-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          accessCode: publicAccessCode
+        })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        sessionStorage.removeItem("publicAccessCode");
+        showError(data.message || "公共授权已失效。");
+        return;
+      }
+    } catch (err) {
+      showError("公共授权验证失败，请稍后重试。");
+      return;
+    } finally {
+      enterBtn.disabled = false;
+    }
+  }
+
   currentQuestion = 0;
   userAnswers = new Array(questions.length).fill(null);
   resetScores();

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>反派电影人格测试 - 授权入口</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="app">
+    <section class="screen active">
+      <h1>反派电影人格测试</h1>
+      <p class="subtitle">请输入授权码进入测试</p>
+
+      <input
+        id="accessCodeInput"
+        class="admin-input"
+        type="text"
+        placeholder="请输入授权码"
+        autocomplete="off"
+      />
+
+      <button id="enterTestBtn" class="btn red">开始测试</button>
+
+      <p id="accessStatusText" class="subtitle"></p>
+    </section>
+  </main>
+
+  <script src="js/access.js"></script>
+</body>
+</html>
