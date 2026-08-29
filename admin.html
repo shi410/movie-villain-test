@@ -12,9 +12,15 @@
       <h1>链接生成器</h1>
       <p class="subtitle">批量生成一次性测试链接</p>
 
+      <label for="testSelect">选择测试</label>
+      <select id="testSelect" class="admin-input" disabled>
+        <option value="">正在加载测试...</option>
+      </select>
+
+      <label for="countInput">生成数量</label>
       <input id="countInput" class="admin-input" type="number" value="10" min="1" max="1000" />
 
-      <button id="generateBtn" class="btn red">生成链接</button>
+      <button id="generateBtn" class="btn red" disabled>生成链接</button>
       <button id="copyBtn" class="btn light">复制全部</button>
 
       <p id="statusText" class="subtitle"></p>
@@ -48,6 +54,9 @@
     </section>
   </main>
 
+  <script src="tests/definitions.js"></script>
+  <script src="tests/registry.js"></script>
+  <script src="tests/villain/manifest.js"></script>
   <script src="js/admin.js"></script>
 </body>
 </html>
