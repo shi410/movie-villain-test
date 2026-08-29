@@ -4,6 +4,7 @@ let currentToken = null;
 let tokenUsed = false;
 let currentPersonality = null;
 let publicAccessMode = false;
+const currentTestId = "villain";
 
 const personalityOrder = [
   "homelander",
@@ -282,7 +283,11 @@ async function validateToken() {
   }
 
   try {
-    const res = await fetch(`/api/validate-token?token=${encodeURIComponent(currentToken)}`);
+    const tokenValidationParams = new URLSearchParams({
+      token: currentToken,
+      expectedTestId: currentTestId
+    });
+    const res = await fetch(`/api/validate-token?${tokenValidationParams.toString()}`);
     const data = await res.json();
 
     if (!res.ok || !data.valid) {
@@ -455,6 +460,7 @@ async function markTokenUsed() {
       body: JSON.stringify({
         token: currentToken,
         resultType: currentPersonality.id,
+        testId: currentTestId,
         resultData: {
           score: score,
           primaryHits: primaryHits,
