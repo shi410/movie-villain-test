@@ -1,3 +1,5 @@
+import testDefinitions from "../tests/definitions.js";
+
 function createToken(length = 32) {
   const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let token = "";
@@ -14,13 +16,27 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  const { count = 10 } = req.body;
+  const { count = 10, testId } = req.body;
+
+  const requestTestId = testId ?? "villain";
+  const testDefinition = typeof requestTestId === "string"
+    ? testDefinitions.get(requestTestId)
+    : null;
+
+  if (!testDefinition) {
+    return res.status(400).json({ error: "未知的测试类型。" });
+  }
+
+  if (testDefinition.enabled !== true) {
+    return res.status(403).json({ error: "该测试当前已关闭。" });
+  }
 
   const safeCount = Math.min(Number(count), 1000);
 
   const rows = Array.from({ length: safeCount }, () => ({
     token: createToken(),
-    used: false
+    used: false,
+    test_id: requestTestId
   }));
 
   const response = await fetch(
@@ -46,7 +62,11 @@ export default async function handler(req, res) {
 
   const baseUrl = "https://filmtest.top";
 
-  const links = data.map(item => `${baseUrl}/?token=${item.token}`);
+  const links = data.map(item => {
+    const entryUrl = new URL(testDefinition.entryPath, baseUrl);
+    entryUrl.searchParams.set("token", item.token);
+    return entryUrl.toString();
+  });
 
   return res.status(200).json({
     count: links.length,

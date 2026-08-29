@@ -1,8 +1,19 @@
+import testDefinitions from "../tests/definitions.js";
+
 export default async function handler(req, res) {
-  const { token } = req.query;
+  const { token, expectedTestId } = req.query;
 
   if (!token) {
     return res.status(400).json({ valid: false, message: "请使用购买后获得的专属链接进入测试。" });
+  }
+
+  const hasExpectedTestId = expectedTestId !== undefined && expectedTestId !== null;
+
+  if (
+    hasExpectedTestId &&
+    (typeof expectedTestId !== "string" || !testDefinitions.get(expectedTestId))
+  ) {
+    return res.status(400).json({ valid: false, message: "未知的测试类型。" });
   }
 
   const response = await fetch(
@@ -21,13 +32,25 @@ export default async function handler(req, res) {
     return res.status(404).json({ valid: false, message: "链接无效。" });
   }
 
-  if (data[0].used) {
-    if (data[0].result_type) {
+  const tokenRow = data[0];
+  const effectiveTestId = tokenRow.test_id ?? "villain";
+
+  if (!testDefinitions.get(effectiveTestId)) {
+    return res.status(403).json({ valid: false, message: "该链接所属的测试不存在。" });
+  }
+
+  if (hasExpectedTestId && effectiveTestId !== expectedTestId) {
+    return res.status(403).json({ valid: false, message: "该链接不适用于当前测试。" });
+  }
+
+  if (tokenRow.used) {
+    if (tokenRow.result_type) {
       return res.status(200).json({
         valid: true,
         completed: true,
-        resultType: data[0].result_type,
-        resultData: data[0].result_data
+        testId: effectiveTestId,
+        resultType: tokenRow.result_type,
+        resultData: tokenRow.result_data
       });
     }
 
@@ -39,6 +62,7 @@ export default async function handler(req, res) {
 
   return res.status(200).json({
     valid: true,
-    completed: false
+    completed: false,
+    testId: effectiveTestId
   });
 }
