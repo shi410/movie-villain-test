@@ -2,6 +2,21 @@
 
 Run after every Runtime step in addition to `node tests/regression/villain-baseline.mjs`.
 
+For isolated local Runtime testing, start:
+
+```text
+node tests/regression/local-runtime-server.mjs
+```
+
+Then use `http://127.0.0.1:4173/`. The server keeps all Token and public-access
+state in memory and never connects to Supabase. Available fixtures are:
+
+- `?token=valid-unused`
+- `?token=wrong-test`
+- `?token=completed`
+- `?token=legacy-completed`
+- public access code `OPEN`
+
 ## Token and report
 
 1. Open `/?token=<unused villain token>` and confirm the villain home page works.

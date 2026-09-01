@@ -1,9 +1,6 @@
 let currentQuestion = 0;
 let userAnswers = new Array(questions.length).fill(null);
-let currentToken = null;
-let tokenUsed = false;
 let currentPersonality = null;
-let publicAccessMode = false;
 const currentTestId = "villain";
 
 const personalityOrder = [
@@ -243,94 +240,6 @@ function wait(ms) {
   });
 }
 
-async function validateToken() {
-  const params = new URLSearchParams(window.location.search);
-  currentToken = params.get("token");
-
-  if (!currentToken) {
-    const publicAccessCode = sessionStorage.getItem("publicAccessCode");
-
-    if (!publicAccessCode) {
-      showError("请使用购买后获得的专属链接，或通过公共授权入口进入测试。");
-      return;
-    }
-
-    try {
-      const res = await fetch("/api/validate-access-code", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          accessCode: publicAccessCode
-        })
-      });
-
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        sessionStorage.removeItem("publicAccessCode");
-        showError(data.message || "公共授权已失效。");
-        return;
-      }
-
-      publicAccessMode = true;
-      return;
-    } catch (err) {
-      showError("公共授权验证失败，请稍后重试。");
-      return;
-    }
-  }
-
-  try {
-    const tokenValidationParams = new URLSearchParams({
-      token: currentToken,
-      expectedTestId: currentTestId
-    });
-    const res = await fetch(`/api/validate-token?${tokenValidationParams.toString()}`);
-    const data = await res.json();
-
-    if (!res.ok || !data.valid) {
-      showError(data.message || "链接无效或已使用。");
-      return;
-    }
-
-    if (data.completed && data.resultType) {
-      const personality = results[data.resultType];
-
-      if (!personality) {
-        showError("历史测试结果读取失败，请联系客服。");
-        return;
-      }
-
-      if (data.resultData) {
-        Object.keys(score).forEach(id => {
-          score[id] = data.resultData.score?.[id] || 0;
-        });
-
-        Object.keys(primaryHits).forEach(id => {
-          primaryHits[id] = data.resultData.primaryHits?.[id] || 0;
-        });
-
-        primaryHistory.length = 0;
-
-        if (Array.isArray(data.resultData.primaryHistory)) {
-          primaryHistory.push(...data.resultData.primaryHistory);
-        }
-      }
-
-      currentPersonality = personality;
-      tokenUsed = true;
-
-      renderResult(personality);
-      showPage(resultPage);
-      return;
-    }
-  } catch (err) {
-    showError("链接验证失败，请稍后重试。");
-  }
-}
-
 function getOptionLabel(index) {
   return ["A", "B", "C", "D"][index] || "";
 }
@@ -434,10 +343,10 @@ function updateQuestionNav() {
   }
 }
 
-function rebuildScoresFromAnswers() {
+function rebuildScoresFromAnswers(answers = userAnswers) {
   resetScores();
 
-  userAnswers.forEach((answerIndex, questionIndex) => {
+  answers.forEach((answerIndex, questionIndex) => {
     if (answerIndex === null) return;
 
     const selectedOption = questions[questionIndex].options[answerIndex];
@@ -446,42 +355,6 @@ function rebuildScoresFromAnswers() {
 
     applyOptionScore(selectedOption);
   });
-}
-
-async function markTokenUsed() {
-  if (!currentToken || tokenUsed) return true;
-
-  try {
-    const res = await fetch("/api/use-token", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        token: currentToken,
-        resultType: currentPersonality.id,
-        testId: currentTestId,
-        resultData: {
-          score: score,
-          primaryHits: primaryHits,
-          primaryHistory: primaryHistory
-        }
-      })
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      showError(data.message || "链接核销失败，请联系客服。");
-      return false;
-    }
-
-    tokenUsed = true;
-    return true;
-  } catch (err) {
-    showError("链接核销失败，请联系客服。");
-    return false;
-  }
 }
 
 function iconSvg(type) {
@@ -933,19 +806,71 @@ function getResultPersonality() {
   return results[sortedIds[0]];
 }
 
-async function showLoadingThenResult() {
-  const personality = getResultPersonality();
+function createVillainResultPayload() {
+  return {
+    score: { ...score },
+    primaryHits: { ...primaryHits },
+    primaryHistory: [...primaryHistory]
+  };
+}
 
+function restoreVillainResultPayload(resultPayload) {
+  resetScores();
+
+  Object.keys(score).forEach(id => {
+    score[id] = resultPayload?.score?.[id] || 0;
+  });
+
+  Object.keys(primaryHits).forEach(id => {
+    primaryHits[id] = resultPayload?.primaryHits?.[id] || 0;
+  });
+
+  if (Array.isArray(resultPayload?.primaryHistory)) {
+    primaryHistory.push(...resultPayload.primaryHistory);
+  }
+}
+
+const villainProduct = VillainProductAdapter.createVillainProduct({
+  score(answers) {
+    rebuildScoresFromAnswers(answers);
+    return createVillainResultPayload();
+  },
+
+  getResultType(resultPayload) {
+    restoreVillainResultPayload(resultPayload);
+    return getResultPersonality().id;
+  },
+
+  renderReport(resultPayload, context) {
+    restoreVillainResultPayload(resultPayload);
+
+    const personality = results[context?.resultType];
+
+    if (!personality) {
+      throw new Error("Unknown villain result type.");
+    }
+
+    renderResult(personality);
+  }
+});
+
+TestProductRegistry.registerProduct(villainProduct);
+
+const villainRuntime = PlatformRuntime.createRuntime({
+  testId: currentTestId,
+  productRegistry: TestProductRegistry,
+  onError: showError
+});
+
+async function showLoadingThenResult() {
   showPage(loadingPage);
 
-  renderResult(personality);
-
-  const used = await Promise.all([
-    markTokenUsed(),
+  const completed = await Promise.all([
+    villainRuntime.complete(userAnswers),
     wait(1000)
-  ]).then(([success]) => success);
+  ]).then(([result]) => result);
 
-  if (!used) return;
+  if (!completed.ok) return;
 
   showPage(resultPage);
 }
@@ -1003,79 +928,32 @@ function closeModal(modal) {
 }
 
 startBtn.onclick = async () => {
-  if (!publicAccessMode) {
+  if (!villainRuntime.isPublicAccessMode()) {
     showPage(introPage);
-    return;
-  }
-
-  const publicAccessCode = sessionStorage.getItem("publicAccessCode");
-
-  if (!publicAccessCode) {
-    showError("公共授权已失效，请重新通过授权入口进入测试。");
     return;
   }
 
   startBtn.disabled = true;
 
   try {
-    const res = await fetch("/api/validate-access-code", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        accessCode: publicAccessCode
-      })
-    });
+    const accessResult = await villainRuntime.authorizePublicEntry();
 
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-      sessionStorage.removeItem("publicAccessCode");
-      showError(data.message || "公共授权已失效。");
-      return;
-    }
+    if (!accessResult.ok) return;
 
     showPage(introPage);
-  } catch (err) {
-    showError("公共授权验证失败，请稍后重试。");
   } finally {
     startBtn.disabled = false;
   }
 };
 
 enterBtn.onclick = async () => {
-  if (publicAccessMode) {
-    const publicAccessCode = sessionStorage.getItem("publicAccessCode");
-
-    if (!publicAccessCode) {
-      showError("公共授权已失效，请重新通过授权入口进入测试。");
-      return;
-    }
-
+  if (villainRuntime.isPublicAccessMode()) {
     enterBtn.disabled = true;
 
     try {
-      const res = await fetch("/api/validate-access-code", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          accessCode: publicAccessCode
-        })
-      });
+      const accessResult = await villainRuntime.authorizePublicEntry();
 
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        sessionStorage.removeItem("publicAccessCode");
-        showError(data.message || "公共授权已失效。");
-        return;
-      }
-    } catch (err) {
-      showError("公共授权验证失败，请稍后重试。");
-      return;
+      if (!accessResult.ok) return;
     } finally {
       enterBtn.disabled = false;
     }
@@ -1108,7 +986,6 @@ if (nextQuestionBtn) {
       return;
     }
 
-    rebuildScoresFromAnswers();
     showLoadingThenResult();
   };
 }
@@ -1163,4 +1040,8 @@ if (archiveModal) {
 }
 
 resetScores();
-validateToken();
+villainRuntime.initialize().then(result => {
+  if (result.ok && result.completed) {
+    showPage(resultPage);
+  }
+});

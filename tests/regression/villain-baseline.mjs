@@ -69,7 +69,7 @@ function scoringContext(context) {
   const actualIds = Array.from(vm.runInNewContext(match[1]));
   assert.deepEqual(actualIds, ids);
   vm.runInContext(`var personalityOrder=${JSON.stringify(actualIds)};var score={};var primaryHits={};var primaryHistory=[];var userAnswers=[];`, context);
-  for (const name of ["resetScores","applyOptionScore","rebuildScoresFromAnswers","getPrimaryLastIndex","getResultPersonality"]) {
+  for (const name of ["resetScores","applyOptionScore","rebuildScoresFromAnswers","getPrimaryLastIndex","getResultPersonality","createVillainResultPayload","restoreVillainResultPayload"]) {
     vm.runInContext(extractFunction(source, name), context);
   }
   return context;
@@ -93,7 +93,10 @@ await test("definition and formal URL baseline", () => {
     { id: "villain", enabled: true, entry: "/", access: "/access.html" }
   );
   assert.equal(c.TestDefinitions.get("scl90"), null);
-  assert.match(read("index.html"), /<script src="js\/app\.js"><\/script>/);
+  const indexSource = read("index.html");
+  assert.match(indexSource, /<script src="js\/platform\/runtime\.js"><\/script>/);
+  assert.match(indexSource, /<script src="js\/app\.js"><\/script>/);
+  assert.ok(indexSource.indexOf("js/platform/runtime.js") < indexSource.indexOf("js/app.js"));
   assert.match(read("access.html"), /<script src="js\/access\.js"><\/script>/);
 });
 
@@ -116,10 +119,15 @@ await test("production scoring fixtures and resultPayload", () => {
     vm.runInContext(`userAnswers=${JSON.stringify(answers)}`, c);
     vm.runInContext("rebuildScoresFromAnswers()", c);
     const payload = JSON.parse(vm.runInContext("JSON.stringify({score,primaryHits,primaryHistory})", c));
+    const contractPayload = JSON.parse(vm.runInContext("JSON.stringify(createVillainResultPayload())", c));
     assert.deepEqual(Object.keys(payload), ["score", "primaryHits", "primaryHistory"]);
+    assert.deepEqual(contractPayload, payload, `${name} Contract payload`);
     assert.equal(vm.runInContext("getResultPersonality().id", c), expectedWinner, name);
     assert.equal(hash(JSON.stringify(payload)), expectedHash, name);
     assert.doesNotThrow(() => JSON.stringify(payload));
+    vm.runInContext("resetScores()", c);
+    vm.runInContext(`restoreVillainResultPayload(${JSON.stringify(payload)})`, c);
+    assert.equal(vm.runInContext("getResultPersonality().id", c), expectedWinner, `${name} restore`);
   }
 });
 
@@ -176,12 +184,14 @@ await test("use-token baseline", async () => {
 });
 
 await test("historical restore source baseline", () => {
-  const source = read("js/app.js");
-  assert.match(source, /const personality = results\[data\.resultType\]/);
-  assert.match(source, /data\.resultData\.score\?\.\[id\]/);
-  assert.match(source, /data\.resultData\.primaryHits\?\.\[id\]/);
-  assert.match(source, /primaryHistory\.push\(\.\.\.data\.resultData\.primaryHistory\)/);
-  assert.match(source, /renderResult\(personality\)/);
+  const appSource = read("js/app.js");
+  const runtimeSource = read("js/platform/runtime.js");
+  assert.match(runtimeSource, /product\.renderReport\(data\.resultData/);
+  assert.match(appSource, /resultPayload\?\.score\?\.\[id\]/);
+  assert.match(appSource, /resultPayload\?\.primaryHits\?\.\[id\]/);
+  assert.match(appSource, /primaryHistory\.push\(\.\.\.resultPayload\.primaryHistory\)/);
+  assert.match(appSource, /const personality = results\[context\?\.resultType\]/);
+  assert.match(appSource, /renderResult\(personality\)/);
 });
 
 await test("global public-access baseline", async () => {
@@ -198,9 +208,13 @@ await test("global public-access baseline", async () => {
     await handler({ method: "POST", body: { accessCode: "GLOBAL" } }, res);
     assert.equal(res.statusCode, 200);
     assert.ok(urls.every(url => url.includes("public_access?id=eq.1") && !url.includes("test_id")));
-    const source = read("js/app.js");
-    assert.match(source, /if \(!currentToken \|\| tokenUsed\) return true;/);
-    assert.equal((source.match(/fetch\("\/api\/validate-access-code"/g) || []).length, 3);
+    const appSource = read("js/app.js");
+    const runtimeSource = read("js/platform/runtime.js");
+    const completeSource = extractFunction(runtimeSource, "complete");
+    assert.match(runtimeSource, /if \(!currentToken \|\| tokenUsed\)/);
+    assert.equal((runtimeSource.match(/fetchImpl\("\/api\/validate-access-code"/g) || []).length, 1);
+    assert.equal((appSource.match(/villainRuntime\.authorizePublicEntry\(\)/g) || []).length, 2);
+    assert.doesNotMatch(completeSource, /validate-access-code|validatePublicAccessCode/);
   } finally { globalThis.fetch = savedFetch; }
 });
 
