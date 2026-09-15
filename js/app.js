@@ -859,6 +859,7 @@ TestProductRegistry.registerProduct(villainProduct);
 const villainRuntime = PlatformRuntime.createRuntime({
   testId: currentTestId,
   productRegistry: TestProductRegistry,
+  testRegistry: TestRegistry,
   onError: showError
 });
 

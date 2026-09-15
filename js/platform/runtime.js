@@ -28,13 +28,25 @@
 
     const testId = contract.assertTestId(options.testId);
     const registry = options.productRegistry;
+    const testRegistry = options.testRegistry;
     const fetchImpl = options.fetchImpl || globalThis.fetch?.bind(globalThis);
     const sessionStore = options.sessionStore || globalThis.sessionStorage;
     const getLocationSearch = options.getLocationSearch || (() => globalThis.location?.search || "");
     const onError = typeof options.onError === "function" ? options.onError : () => {};
+    const reportContext = options.reportContext && typeof options.reportContext === "object"
+      ? options.reportContext
+      : {};
 
     if (!registry || typeof registry.getProduct !== "function") {
       throw new TypeError("Platform Runtime requires a Product Registry.");
+    }
+
+    if (
+      !testRegistry ||
+      typeof testRegistry.get !== "function" ||
+      typeof testRegistry.isEnabled !== "function"
+    ) {
+      throw new TypeError("Platform Runtime requires a Test Registry.");
     }
 
     if (typeof fetchImpl !== "function") {
@@ -101,6 +113,12 @@
       currentToken = params.get("token");
 
       if (!currentToken) {
+        const testDefinition = testRegistry.get(testId);
+
+        if (!testDefinition || testRegistry.isEnabled(testId) !== true) {
+          return fail("该测试当前尚未开放。");
+        }
+
         const publicAccessCode = sessionStore.getItem("publicAccessCode");
 
         if (!publicAccessCode) {
@@ -155,6 +173,7 @@
         try {
           contract.assertSerializableResultPayload(data.resultData);
           product.renderReport(data.resultData, {
+            ...reportContext,
             testId,
             resultType: data.resultType,
             mode: "token",
@@ -206,6 +225,7 @@
         }
 
         product.renderReport(resultPayload, {
+          ...reportContext,
           ...context,
           testId,
           resultType,

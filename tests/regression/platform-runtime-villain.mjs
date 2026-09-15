@@ -47,12 +47,25 @@ function createSession(initial = {}) {
   };
 }
 
+function createTestRegistry(testId = "villain", enabled = true) {
+  const definition = { test_id: testId, enabled };
+  return {
+    get(requestedTestId) {
+      return requestedTestId === testId ? definition : null;
+    },
+    isEnabled(requestedTestId) {
+      return requestedTestId === testId && enabled;
+    }
+  };
+}
+
 function createHarness({
   search = "?token=unused",
   fetchImpl,
   session = createSession(),
   payload = { opaque: { value: 7 } },
-  resultType = "opaque-result"
+  resultType = "opaque-result",
+  reportContext = {}
 } = {}) {
   const calls = [];
   const product = villainAdapter.createVillainProduct({
@@ -77,10 +90,12 @@ function createHarness({
   const runtime = runtimeModule.createRuntime({
     testId: "villain",
     productRegistry: registry,
+    testRegistry: createTestRegistry(),
     fetchImpl,
     sessionStore: session,
     getLocationSearch: () => search,
-    onError: message => errors.push(message)
+    onError: message => errors.push(message),
+    reportContext
   });
 
   return { runtime, product, calls, errors, session, payload, resultType };
@@ -99,6 +114,7 @@ await test("villain Product is a valid formally registered implementation", () =
   assert.match(appSource, /VillainProductAdapter\.createVillainProduct/);
   assert.match(appSource, /TestProductRegistry\.registerProduct\(villainProduct\)/);
   assert.match(appSource, /PlatformRuntime\.createRuntime/);
+  assert.match(appSource, /testRegistry: TestRegistry/);
 });
 
 await test("Runtime dispatches the requested test_id", async () => {
@@ -116,6 +132,7 @@ await test("Runtime dispatches the requested test_id", async () => {
         return product;
       }
     },
+    testRegistry: createTestRegistry(),
     fetchImpl: async () => response(true, {
       valid: true,
       completed: false,
@@ -317,4 +334,23 @@ await test("Platform Runtime does not interpret product-private payload fields",
   assert.match(source, /resultData: resultPayload/);
 });
 
-console.log(`${passed}/12 PASS`);
+await test("Platform Runtime passes product-owned report context without interpreting it", async () => {
+  const reportRoot = { productOwned: true };
+  const restoredPayload = { opaque: { value: 7 } };
+  const harness = createHarness({
+    reportContext: { reportRoot, customValue: "opaque-context" },
+    fetchImpl: async () => response(true, {
+      valid: true,
+      completed: true,
+      testId: "villain",
+      resultType: "joker",
+      resultData: restoredPayload
+    })
+  });
+
+  assert.equal((await harness.runtime.initialize()).ok, true);
+  assert.equal(harness.calls[0][2].reportRoot, reportRoot);
+  assert.equal(harness.calls[0][2].customValue, "opaque-context");
+});
+
+console.log(`${passed}/13 PASS`);

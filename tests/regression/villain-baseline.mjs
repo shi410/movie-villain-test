@@ -87,12 +87,25 @@ await test("definition and formal URL baseline", () => {
   const c = {}; c.globalThis = c; vm.createContext(c);
   vm.runInContext(read("tests/definitions.js"), c);
   const list = c.TestDefinitions.list();
-  assert.equal(list.length, 1);
+  assert.equal(list.length, 2);
   assert.deepEqual(
     { id: list[0].test_id, enabled: list[0].enabled, entry: list[0].entryPath, access: list[0].publicAccessPath },
     { id: "villain", enabled: true, entry: "/", access: "/access.html" }
   );
-  assert.equal(c.TestDefinitions.get("scl90"), null);
+  assert.deepEqual(
+    {
+      id: list[1].test_id,
+      enabled: list[1].enabled,
+      entry: list[1].entryPath,
+      access: list[1].publicAccessPath
+    },
+    {
+      id: "scl90",
+      enabled: false,
+      entry: "/scl90/",
+      access: "/access.html?test=scl90"
+    }
+  );
   const indexSource = read("index.html");
   assert.match(indexSource, /<script src="js\/platform\/runtime\.js"><\/script>/);
   assert.match(indexSource, /<script src="js\/app\.js"><\/script>/);
@@ -140,8 +153,11 @@ await test("validate-token baseline", async () => {
     await handler({ query: { token: "new", expectedTestId: "villain" } }, res);
     assert.deepEqual(res.body, { valid: true, completed: false, testId: "villain" });
     res = response();
-    await handler({ query: { token: "new", expectedTestId: "scl90" } }, res);
+    await handler({ query: { token: "new", expectedTestId: "unknown-test" } }, res);
     assert.equal(res.statusCode, 400);
+    res = response();
+    await handler({ query: { token: "new", expectedTestId: "scl90" } }, res);
+    assert.equal(res.statusCode, 403);
 
     globalThis.fetch = async () => ({ ok: true, json: async () => [{ used: false, test_id: null }] });
     res = response();
