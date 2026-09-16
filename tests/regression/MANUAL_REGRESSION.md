@@ -1,4 +1,4 @@
-# Villain Runtime Manual Regression
+# Platform Runtime Manual Regression
 
 Run after every Runtime step in addition to `node tests/regression/villain-baseline.mjs`.
 
@@ -15,6 +15,8 @@ state in memory and never connects to Supabase. Available fixtures are:
 - `?token=wrong-test`
 - `?token=completed`
 - `?token=legacy-completed`
+- `/scl90/?token=scl-valid-unused`
+- `/scl90/?token=scl-completed`
 - public access code `OPEN`
 
 ## Token and report
@@ -39,13 +41,35 @@ state in memory and never connects to Supabase. Available fixtures are:
 4. Enter questions while enabled, then disable it; confirm the current round can finish.
 5. Refresh or reopen after disabling; confirm a new round cannot start.
 6. Confirm public mode does not write a `test_links` row.
+7. Open `/access.html?test=scl90`; while SCL-90 is disabled, confirm its name is
+   shown and public entry remains blocked.
+8. Enter villain with the global code, then directly open `/scl90/`; confirm the
+   carried public session cannot bypass the disabled SCL-90 definition.
+
+## SCL-90 local integration
+
+1. Open `/scl90/?token=scl-valid-unused` and confirm the home page loads.
+2. Confirm the Token is preserved when navigating to `test.html`.
+3. Complete all 90 questions and confirm `/api/use-token` receives
+   `testId: scl90`, `resultType: scl90-report`, and the opaque SCL-90 payload.
+4. Open the generated report link and confirm the completed Token restores the
+   full report through the SCL-90 renderer.
+5. Reopen `/scl90/?token=scl-completed` and confirm it dispatches to the SCL-90
+   report rather than villain.
+6. Confirm a villain Token is rejected at the SCL-90 entry.
+7. Confirm fixture URLs bypass Platform authorization only on localhost; the
+   same query parameters on a non-local hostname must follow normal Runtime
+   authorization.
+8. Confirm Admin lists villain only while SCL-90 remains disabled.
 
 ## Formal URLs and presentation
 
 1. Confirm `/` opens villain.
 2. Confirm `/?token=...` remains the villain Token URL.
 3. Confirm `/access.html` remains the villain public entry.
-4. Confirm archive, rebate modal and report presentation at mobile and desktop widths.
+4. Confirm `/access.html?test=scl90` resolves the SCL-90 public entry without
+   changing the default villain route.
+5. Confirm archive, rebate modal and report presentation at mobile and desktop widths.
 
 ## Fallback fixture note
 

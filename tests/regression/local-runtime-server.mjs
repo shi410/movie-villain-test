@@ -1,6 +1,9 @@
 import http from "node:http";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
 
 const root = path.resolve(import.meta.dirname, "../..");
 const port = Number(process.env.PORT || 4173);
@@ -9,6 +12,8 @@ const historicalPayload = {
   primaryHits: { joker: 3 },
   primaryHistory: ["joker", "joker", "joker"]
 };
+const scl90Product = require("../scl90/product.js");
+const scl90HistoricalPayload = scl90Product.score(Array(90).fill(2));
 
 const state = {
   publicAccessEnabled: true,
@@ -38,6 +43,13 @@ function resetState() {
       resultType: "joker",
       resultData: historicalPayload,
       sourceTestId: null
+    }],
+    ["scl-valid-unused", { used: false, testId: "scl90" }],
+    ["scl-completed", {
+      used: true,
+      testId: "scl90",
+      resultType: "scl90-report",
+      resultData: scl90HistoricalPayload
     }]
   ]);
 }
@@ -157,6 +169,11 @@ async function handleApi(request, response, url) {
     const body = await readJson(request);
     const count = Math.max(1, Math.min(Number(body.count) || 1, 1000));
 
+    if (body.testId === "scl90") {
+      sendJson(response, 403, { error: "该测试当前已关闭。" });
+      return true;
+    }
+
     if (body.testId !== "villain") {
       sendJson(response, 400, { error: "未知测试" });
       return true;
@@ -189,7 +206,11 @@ const server = http.createServer(async (request, response) => {
 
     if (await handleApi(request, response, url)) return;
 
-    const pathname = url.pathname === "/" ? "/index.html" : url.pathname;
+    const pathname = url.pathname === "/"
+      ? "/index.html"
+      : url.pathname.endsWith("/")
+        ? `${url.pathname}index.html`
+        : url.pathname;
     const relativePath = decodeURIComponent(pathname).replace(/^\/+/, "");
     const filePath = path.resolve(root, relativePath);
 

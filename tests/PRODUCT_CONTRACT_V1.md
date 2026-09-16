@@ -19,7 +19,8 @@ minimum Product Contract shared by Platform and test products.
   `resultPayload`.
 - `getResultType(resultPayload)` supplies the stable `result_type` that the
   existing completion API persists separately from `result_data`.
-- `renderReport(resultPayload, context)` owns report DOM and presentation.
+- `renderReport(resultPayload, context)` owns report DOM and presentation. Runtime
+  passes product-owned report context through without interpreting its fields.
 - `resultPayload` must be JSON serializable and sufficient to restore a report.
 
 Platform does not define question, answer, result payload, scoring, report DOM,
@@ -31,8 +32,24 @@ Platform obtains implementations with
 `TestProductRegistry.getProduct(testId)`. Products register through
 `registerProduct(product)`; shared code must not branch on known product IDs.
 
-Runtime Step 2 creates this boundary but does not load it from production HTML
-or switch the existing villain runtime.
+Runtime Step 3A placed villain on this boundary. Runtime Step 3B adds the
+SCL-90 Product and its isolated `/scl90/` lifecycle without changing either
+product's private data model.
+
+## Current registration state
+
+- `villain`: enabled, entry `/`, public entry `/access.html`
+- `scl90`: registered but disabled, entry `/scl90/`, public entry
+  `/access.html?test=scl90`
+
+Keeping SCL-90 disabled prevents Admin Token generation and public entry until
+its commercial content is explicitly cleared. This state does not change its
+Product Contract implementation or local regression fixtures.
+
+Platform Runtime requires the shared Test Registry and checks `enabled` before
+entering public-access mode. The switch does not invalidate an already issued
+Token or a completed historical result. Development fixture bypasses are
+restricted to localhost and are not a production entry mechanism.
 
 ## SCL-90 private boundary
 
