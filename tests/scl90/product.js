@@ -17,7 +17,15 @@
 ) {
   "use strict";
   function score(answers) {
-    const resultPayload = scoring.score(answers);
+    const scoredPayload = scoring.score(answers);
+    const generatedAt = new Date();
+    const resultPayload = {
+      ...scoredPayload,
+      reportContext: {
+        generatedAt: generatedAt.toISOString(),
+        generatedLabel: generatedAt.toLocaleString("zh-CN")
+      }
+    };
     ProductContract.assertSerializableResultPayload(resultPayload);
     return resultPayload;
   }

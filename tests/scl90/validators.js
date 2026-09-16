@@ -100,6 +100,21 @@
     if (!resultPayload.total || !resultPayload.symptoms || !resultPayload.factors || !resultPayload.additional) {
       throw new TypeError("Current SCL-90 resultPayload is missing scoring sections.");
     }
+    if (resultPayload.reportContext !== undefined) {
+      const context = resultPayload.reportContext;
+      const generatedAt = new Date(context?.generatedAt);
+      if (
+        !context ||
+        typeof context !== "object" ||
+        Array.isArray(context) ||
+        typeof context.generatedAt !== "string" ||
+        Number.isNaN(generatedAt.getTime()) ||
+        typeof context.generatedLabel !== "string" ||
+        !context.generatedLabel.trim()
+      ) {
+        throw new TypeError("SCL-90 reportContext must contain a valid generatedAt and generatedLabel.");
+      }
+    }
     return resultPayload;
   }
 

@@ -39,12 +39,13 @@ product's private data model.
 ## Current registration state
 
 - `villain`: enabled, entry `/`, public entry `/access.html`
-- `scl90`: registered but disabled, entry `/scl90/`, public entry
+- `scl90`: enabled in the private capability candidate, entry `/scl90/`, public entry
   `/access.html?test=scl90`
 
-Keeping SCL-90 disabled prevents Admin Token generation and public entry until
-its commercial content is explicitly cleared. This state does not change its
-Product Contract implementation or local regression fixtures.
+The private capability candidate enables SCL-90 so Admin, Token completion and
+historical restore can be verified end to end. Commercial Rights Gate remains a
+separate publication gate: this candidate and its restricted content must not be
+pushed to public GitHub or deployed to public Production until explicitly cleared.
 
 Platform Runtime requires the shared Test Registry and checks `enabled` before
 entering public-access mode. The switch does not invalidate an already issued

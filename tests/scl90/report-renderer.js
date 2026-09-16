@@ -49,7 +49,7 @@
       symptoms: resultPayload.symptoms, screening: resultPayload.screening, report: resultPayload.report, safety: resultPayload.safety,
       factors: Object.freeze(factors), highlighted: Object.freeze(highlighted), overallSummary,
       radar: Object.freeze(factors.filter(factor => factor.includeInRadar).map(factor => Object.freeze({ id: factor.id, label: factor.label, mean: factor.mean }))),
-      generatedLabel: context && context.generatedLabel ? context.generatedLabel : "生成时间未提供",
+      generatedLabel: resultPayload.reportContext?.generatedLabel || (context && context.generatedLabel ? context.generatedLabel : "生成时间未提供"),
       source: context && context.source ? context.source : "payload", staticCopy, closing, urgentSafety, pendingOverall: false
     });
   }

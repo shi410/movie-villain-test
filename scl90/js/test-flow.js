@@ -17,10 +17,17 @@
   const AUTO_ADVANCE_DELAY_MS = 280;
   const LOADING_STAGE_DELAY_MS = 620;
 
-  function createSession(items) {
+  function createSession(items, initial = null) {
     if (!Array.isArray(items) || items.length < 1) throw new TypeError("question items are required.");
     const answers = Array(90).fill(null);
-    let current = items[0].number;
+    if (initial?.answers) {
+      initial.answers.forEach((answer, index) => {
+        answers[index] = answer;
+      });
+    }
+    let current = items.some(item => item.number === initial?.current)
+      ? initial.current
+      : items[0].number;
     return Object.freeze({
       get current() { return current; },
       get answers() { return answers.slice(); },
@@ -90,7 +97,19 @@
     const root = document.getElementById("test-app");
     const items = fixture ? Scl90VisualQuestions.items : Scl90QuestionsContent.items;
     const copy = Scl90StaticCopy.test;
-    const session = createSession(items);
+    const token = params.get("token");
+    const draftScope = token ? `token:${token}` : "public";
+    let draft = null;
+
+    if (!fixture) {
+      try {
+        draft = Scl90SessionAnswerStore.load(sessionStorage, draftScope);
+      } catch (error) {
+        Scl90SessionAnswerStore.clear(sessionStorage, draftScope);
+      }
+    }
+
+    const session = createSession(items, draft);
     const lastQuestion = items[items.length - 1].number;
     const requested = Number(params.get("question"));
     let navOpen = false;
@@ -108,6 +127,7 @@
       }
 
       if (state.completed) {
+        Scl90SessionAnswerStore.clear(sessionStorage, draftScope);
         location.replace(Scl90PlatformBridge.pathWithToken("report.html"));
         return;
       }
@@ -121,6 +141,14 @@
 
     const optionPairs = copy.options.map((label, index) => [index + 1, label]);
     let transition;
+
+    function persistDraft() {
+      if (fixture) return;
+      Scl90SessionAnswerStore.save(sessionStorage, draftScope, {
+        answers: session.answers,
+        current: session.current
+      });
+    }
 
     function focusQuestion() {
       window.scrollTo({ top: 0, behavior: "auto" });
@@ -181,6 +209,8 @@
           Scl90SessionResultStore.clear(sessionStorage);
         }
 
+        Scl90SessionAnswerStore.clear(sessionStorage, draftScope);
+
         reportHref = Scl90PlatformBridge.pathWithToken("report.html");
       }
 
@@ -205,11 +235,13 @@
       delay: AUTO_ADVANCE_DELAY_MS,
       onSelected() {
         message = "";
+        persistDraft();
         render();
       },
       onAdvance() {
         message = "";
         navOpen = false;
+        persistDraft();
         render();
         focusQuestion();
       }
@@ -227,6 +259,7 @@
         session.go(Number(question.dataset.question));
         navOpen = false;
         message = "";
+        persistDraft();
         render();
         focusQuestion();
         return;
@@ -242,6 +275,7 @@
         session.previous();
         navOpen = false;
         message = "";
+        persistDraft();
         render();
         focusQuestion();
         return;
@@ -257,6 +291,7 @@
           session.next();
           navOpen = false;
           message = "";
+          persistDraft();
           render();
           focusQuestion();
         }

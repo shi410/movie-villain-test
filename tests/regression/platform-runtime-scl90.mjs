@@ -59,7 +59,7 @@ function registryWithDefinition(enabled) {
   };
 }
 
-await test("scl90 definition is registered but remains commercially disabled", () => {
+await test("scl90 definition is enabled in the private capability candidate", () => {
   const definition = TestDefinitions.get("scl90");
   assert.deepEqual(
     {
@@ -70,7 +70,7 @@ await test("scl90 definition is registered but remains commercially disabled", (
     },
     {
       testId: "scl90",
-      enabled: false,
+      enabled: true,
       entryPath: "/scl90/",
       publicAccessPath: "/access.html?test=scl90"
     }
@@ -172,7 +172,7 @@ await test("enabled public scl90 completion stays session-only and never consume
   assert.equal(requests.some(request => request.url === "/api/use-token"), false);
 });
 
-await test("disabled scl90 rejects a carried global public-access session", async () => {
+await test("a disabled scl90 definition rejects a carried global public-access session", async () => {
   const requests = [];
   const runtime = PlatformRuntime.createRuntime({
     testId: "scl90",
@@ -201,17 +201,43 @@ await test("public session result storage round-trips the opaque payload", () =>
   assert.equal(Scl90SessionResultStore.load(storage), null);
 });
 
-await test("disabled scl90 cannot generate new Tokens", async () => {
+await test("enabled scl90 generates a Token bound to its entry path", async () => {
   const handler = (await import(pathToFileURL(resolve(root, "api/generate-links.js")).href)).default;
+  const savedFetch = globalThis.fetch;
+  let insertedRows = null;
   const res = {
     statusCode: null,
     body: null,
     status(code) { this.statusCode = code; return this; },
     json(body) { this.body = body; return this; }
   };
-  await handler({ method: "POST", body: { count: 1, testId: "scl90" } }, res);
-  assert.equal(res.statusCode, 403);
-  assert.equal(res.body.error, "该测试当前已关闭。");
+  try {
+    globalThis.fetch = async (url, options) => {
+      insertedRows = JSON.parse(options.body);
+      return {
+        ok: true,
+        async json() { return insertedRows; }
+      };
+    };
+    await handler({ method: "POST", body: { count: 1, testId: "scl90" } }, res);
+    assert.equal(res.statusCode, 200);
+    assert.deepEqual(insertedRows.map(row => ({ used: row.used, test_id: row.test_id })), [
+      { used: false, test_id: "scl90" }
+    ]);
+    assert.equal(res.body.count, 1);
+    assert.match(res.body.links[0], /^https:\/\/filmtest\.top\/scl90\/\?token=/);
+  } finally {
+    globalThis.fetch = savedFetch;
+  }
+});
+
+await test("Admin derives both enabled products from TestRegistry and submits testId", () => {
+  const enabled = TestDefinitions.list().filter(definition => definition.enabled === true);
+  assert.deepEqual(enabled.map(definition => definition.test_id), ["villain", "scl90"]);
+  const source = readFileSync(resolve(root, "js/admin.js"), "utf8");
+  assert.match(source, /TestRegistry\.list\(\)/);
+  assert.match(source, /new Option\(test\.name, test\.test_id\)/);
+  assert.match(source, /JSON\.stringify\(\{ count, testId \}\)/);
 });
 
 await test("scl90 pages load Contract, Product Registry and Runtime in order", () => {
@@ -227,6 +253,10 @@ await test("scl90 pages load Contract, Product Registry and Runtime in order", (
     assert.ok(definitions >= 0 && definitions < testRegistry && testRegistry < contract, page);
     assert.ok(contract < registry && registry < runtime, page);
     assert.ok(runtime < product && product < bridge, page);
+    if (page !== "scl90/index.html") {
+      const answerStore = source.indexOf("js/session-answer-store.js");
+      assert.ok(bridge < answerStore, page);
+    }
   }
 });
 
@@ -263,4 +293,4 @@ await test("public access routing is definition-driven and preserves villain def
   assert.doesNotMatch(source, /window\.location\.href = "\/"/);
 });
 
-console.log(`${passed}/13 PASS`);
+console.log(`${passed}/14 PASS`);

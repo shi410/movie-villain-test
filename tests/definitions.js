@@ -28,7 +28,7 @@
       name: "SCL-90 症状自评量表",
       slug: "scl90",
       description: "通过 90 个项目了解近期心理症状体验，并生成结构化自评报告。",
-      enabled: false,
+      enabled: true,
       entryPath: "/scl90/",
       publicAccessPath: "/access.html?test=scl90"
     }

@@ -13,6 +13,9 @@ test("score returns the approved serializable payload shape", () => {
   assert.equal(validators.validateCurrentResultPayload(restored), restored);
   assert.equal(restored.schemaVersion, 1);
   assert.equal(restored.testId, "scl90");
+  assert.equal(typeof restored.reportContext.generatedAt, "string");
+  assert.equal(typeof restored.reportContext.generatedLabel, "string");
+  assert.equal(Number.isNaN(new Date(restored.reportContext.generatedAt).getTime()), false);
   assert.deepEqual(Object.keys(restored.factors), [
     "somatization",
     "obsessiveCompulsive",
@@ -27,6 +30,13 @@ test("score returns the approved serializable payload shape", () => {
   assert.ok(restored.additional);
   assert.equal("answers" in restored, false);
   assert.equal("profile" in restored, false);
+});
+
+test("persisted reportContext keeps historical report time stable", () => {
+  const payload = product.score(Array(90).fill(2));
+  const restored = JSON.parse(JSON.stringify(payload));
+  const rendered = product.renderReport(restored, { generatedLabel: "later browser time" });
+  assert.equal(rendered.generatedLabel, payload.reportContext.generatedLabel);
 });
 
 test("returns all Step 03 policies as complete", () => {

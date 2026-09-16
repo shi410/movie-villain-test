@@ -17,6 +17,7 @@ state in memory and never connects to Supabase. Available fixtures are:
 - `?token=legacy-completed`
 - `/scl90/?token=scl-valid-unused`
 - `/scl90/?token=scl-completed`
+- Admin may generate fresh in-memory villain or SCL-90 Tokens in this server.
 - public access code `OPEN`
 
 ## Token and report
@@ -41,26 +42,37 @@ state in memory and never connects to Supabase. Available fixtures are:
 4. Enter questions while enabled, then disable it; confirm the current round can finish.
 5. Refresh or reopen after disabling; confirm a new round cannot start.
 6. Confirm public mode does not write a `test_links` row.
-7. Open `/access.html?test=scl90`; while SCL-90 is disabled, confirm its name is
-   shown and public entry remains blocked.
-8. Enter villain with the global code, then directly open `/scl90/`; confirm the
-   carried public session cannot bypass the disabled SCL-90 definition.
+7. Open `/access.html?test=scl90`; confirm the definition-driven name and SCL-90
+   redirect are used while the global public channel is enabled.
+8. Disable the global channel and confirm both villain and SCL-90 reject new
+   public entry without changing a Token-completed report.
 
 ## SCL-90 local integration
 
-1. Open `/scl90/?token=scl-valid-unused` and confirm the home page loads.
-2. Confirm the Token is preserved when navigating to `test.html`.
-3. Complete all 90 questions and confirm `/api/use-token` receives
+1. Open `/admin.html`, confirm both villain and SCL-90 are listed, select SCL-90
+   and generate one link.
+2. Open the generated SCL-90 link and confirm the Token is preserved when
+   navigating to `test.html`.
+3. Answer several questions, refresh once, and confirm the current question and
+   selected answers recover only for that Token.
+4. Complete all 90 questions and confirm `/api/use-token` receives
    `testId: scl90`, `resultType: scl90-report`, and the opaque SCL-90 payload.
-4. Open the generated report link and confirm the completed Token restores the
+5. Open the generated report link and confirm the completed Token restores the
    full report through the SCL-90 renderer.
-5. Reopen `/scl90/?token=scl-completed` and confirm it dispatches to the SCL-90
+6. Close and reopen the same completed link, then refresh again; confirm the same
+   report restores and `/__test-state` still reports one successful completion
+   with no second `/api/use-token` success.
+7. Reopen `/scl90/?token=scl-completed` and confirm it dispatches to the SCL-90
    report rather than villain.
-6. Confirm a villain Token is rejected at the SCL-90 entry.
-7. Confirm fixture URLs bypass Platform authorization only on localhost; the
+8. Confirm a villain Token is rejected at the SCL-90 entry, and the generated
+   SCL-90 Token is rejected at `/`.
+9. Confirm fixture URLs bypass Platform authorization only on localhost; the
    same query parameters on a non-local hostname must follow normal Runtime
    authorization.
-8. Confirm Admin lists villain only while SCL-90 remains disabled.
+10. Confirm Console contains no product errors throughout the flow.
+
+This capability candidate is private. Do not push or deploy its restricted
+SCL-90 content while Commercial Rights Gate is HOLD.
 
 ## Formal URLs and presentation
 

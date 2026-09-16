@@ -12,6 +12,7 @@ const historicalPayload = {
   primaryHits: { joker: 3 },
   primaryHistory: ["joker", "joker", "joker"]
 };
+const testDefinitions = require("../definitions.js");
 const scl90Product = require("../scl90/product.js");
 const scl90HistoricalPayload = scl90Product.score(Array(90).fill(2));
 
@@ -19,6 +20,8 @@ const state = {
   publicAccessEnabled: true,
   publicAccessCode: "OPEN",
   lastUseTokenBody: null,
+  useTokenRequestCount: 0,
+  successfulCompletionCount: 0,
   accessValidationCount: 0,
   tokens: new Map()
 };
@@ -27,6 +30,8 @@ function resetState() {
   state.publicAccessEnabled = true;
   state.publicAccessCode = "OPEN";
   state.lastUseTokenBody = null;
+  state.useTokenRequestCount = 0;
+  state.successfulCompletionCount = 0;
   state.accessValidationCount = 0;
   state.tokens = new Map([
     ["valid-unused", { used: false, testId: "villain" }],
@@ -75,6 +80,8 @@ function publicState() {
     publicAccessEnabled: state.publicAccessEnabled,
     accessValidationCount: state.accessValidationCount,
     lastUseTokenBody: state.lastUseTokenBody,
+    useTokenRequestCount: state.useTokenRequestCount,
+    successfulCompletionCount: state.successfulCompletionCount,
     tokens: Object.fromEntries(state.tokens)
   };
 }
@@ -130,6 +137,7 @@ async function handleApi(request, response, url) {
   if (url.pathname === "/api/use-token" && request.method === "POST") {
     const body = await readJson(request);
     const tokenState = state.tokens.get(body.token);
+    state.useTokenRequestCount += 1;
 
     if (!tokenState || tokenState.used || tokenState.testId !== body.testId) {
       sendJson(response, 400, { success: false, message: "链接无效或已使用" });
@@ -137,6 +145,7 @@ async function handleApi(request, response, url) {
     }
 
     state.lastUseTokenBody = body;
+    state.successfulCompletionCount += 1;
     state.tokens.set(body.token, {
       used: true,
       testId: body.testId,
@@ -168,23 +177,26 @@ async function handleApi(request, response, url) {
   if (url.pathname === "/api/generate-links" && request.method === "POST") {
     const body = await readJson(request);
     const count = Math.max(1, Math.min(Number(body.count) || 1, 1000));
+    const definition = testDefinitions.get(body.testId);
 
-    if (body.testId === "scl90") {
-      sendJson(response, 403, { error: "该测试当前已关闭。" });
-      return true;
-    }
-
-    if (body.testId !== "villain") {
+    if (!definition) {
       sendJson(response, 400, { error: "未知测试" });
       return true;
     }
 
+    if (definition.enabled !== true) {
+      sendJson(response, 403, { error: "该测试当前已关闭。" });
+      return true;
+    }
+
     const links = Array.from({ length: count }, (_, index) => {
-      const token = `generated-villain-${index + 1}`;
-      state.tokens.set(token, { used: false, testId: "villain" });
-      return `http://127.0.0.1:${port}/?token=${token}`;
+      const token = `generated-${body.testId}-${index + 1}`;
+      state.tokens.set(token, { used: false, testId: body.testId });
+      const entry = new URL(definition.entryPath, `http://127.0.0.1:${port}`);
+      entry.searchParams.set("token", token);
+      return entry.toString();
     });
-    sendJson(response, 200, { count, testId: "villain", links });
+    sendJson(response, 200, { count, testId: body.testId, links });
     return true;
   }
 

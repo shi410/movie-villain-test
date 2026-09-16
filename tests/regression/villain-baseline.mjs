@@ -101,7 +101,7 @@ await test("definition and formal URL baseline", () => {
     },
     {
       id: "scl90",
-      enabled: false,
+      enabled: true,
       entry: "/scl90/",
       access: "/access.html?test=scl90"
     }

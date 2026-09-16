@@ -100,6 +100,7 @@
       return;
     }
 
+    Scl90SessionAnswerStore.clear(sessionStorage, `token:${params.get("token")}`);
     installExport();
     return;
   }
