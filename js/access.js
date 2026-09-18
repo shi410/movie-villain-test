@@ -57,7 +57,7 @@ enterTestBtn.onclick = async () => {
 
     sessionStorage.setItem("publicAccessCode", accessCode);
 
-    window.location.href = testDefinition.entryPath;
+    window.location.href = testDefinition.launchPath || testDefinition.entryPath;
   } catch (err) {
     accessStatusText.textContent = err.message;
     enterTestBtn.disabled = false;

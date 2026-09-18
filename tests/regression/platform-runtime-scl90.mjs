@@ -302,7 +302,7 @@ await test("public access routing is definition-driven and preserves villain def
   const source = readFileSync(resolve(root, "js/access.js"), "utf8");
   assert.match(source, /get\("test"\) \|\| "villain"/);
   assert.match(source, /TestRegistry\?\.get\(requestedTestId\)/);
-  assert.match(source, /window\.location\.href = testDefinition\.entryPath/);
+  assert.match(source, /window\.location\.href = testDefinition\.launchPath \|\| testDefinition\.entryPath/);
   assert.doesNotMatch(source, /window\.location\.href = "\/"/);
 });
 

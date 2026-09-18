@@ -106,7 +106,7 @@ await test("definition and formal URL baseline", () => {
       access: "/access.html?test=scl90"
     }
   );
-  const indexSource = read("index.html");
+  const indexSource = read("villain.html");
   assert.match(indexSource, /<script src="js\/platform\/runtime\.js"><\/script>/);
   assert.match(indexSource, /<script src="js\/app\.js"><\/script>/);
   assert.ok(indexSource.indexOf("js/platform/runtime.js") < indexSource.indexOf("js/app.js"));

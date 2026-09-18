@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>反派电影人格测试</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <main class="app">
+
+    <section id="homePage" class="screen active home-screen">
+      <img class="home-cover" src="images/home-cover.jpg" alt="反派电影人格测试" />
+      <button id="startBtn" class="btn home-start-btn">开始测试</button>
+      <button id="archiveBtn" class="btn archive-btn" type="button">反派人物图鉴</button>
+    </section>
+
+    <section id="introPage" class="screen intro-screen">
+      <div class="file-title">反派电影档案</div>
+      <div class="file-subtitle">VILLAIN MOVIE FILE</div>
+      <div class="file-list">
+        <div><span>影片编号</span><strong>NO.024</strong></div>
+        <div><span>片长</span><strong>约 3 分钟</strong></div>
+        <div><span>主演</span><strong>你自己</strong></div>
+      </div>
+      <p class="subtitle">请根据第一直觉作答。没有标准答案，只有你的真实选择。</p>
+      <button id="enterBtn" class="btn red">进入第一幕</button>
+    </section>
+
+    <section id="questionPage" class="screen question-screen">
+  <div class="question-top">
+    <span id="sceneText">第一幕</span>
+    <span id="countText">1 / 24</span>
+  </div>
+
+  <div class="progress">
+    <div id="progressBar"></div>
+  </div>
+
+  <h2 id="questionText"></h2>
+
+  <div id="options" class="options"></div>
+
+  <div class="question-nav">
+    <button id="prevQuestionBtn" class="question-nav-btn" type="button">上一题</button>
+    <button id="nextQuestionBtn" class="question-nav-btn primary" type="button">下一题</button>
+  </div>
+</section>
+
+    <section id="loadingPage" class="screen loading-screen">
+      <div class="loading-inner">
+        <div class="loading-title">正在生成你的反派人格档案</div>
+        <div class="loading-subtitle">看到那些不为人知的黑暗面……</div>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultPage" class="screen result-screen">
+      <div class="result-hero">
+        <div class="result-meta">
+          <span id="resultNumber"></span>
+          <span id="resultSource"></span>
+        </div>
+
+        <div class="result-label">你的反派人格是</div>
+        <h2 id="resultTitle"></h2>
+        <div id="resultRole" class="result-role"></div>
+        <div id="resultActor" class="result-actor"></div>
+        <img id="resultImage" class="result-image" alt="" />
+        <p id="resultQuote" class="result-quote"></p>
+      </div>
+
+      <div class="keyword-title">反派关键词</div>
+      <div id="resultKeywords" class="keyword-list"></div>
+
+      <section class="report-block">
+        <div class="report-heading">
+          <span class="heading-icon" data-icon="file"></span>
+          <h3>人格判词</h3>
+        </div>
+        <div id="resultVerdict" class="report-text"></div>
+      </section>
+
+      <section class="report-block">
+        <div class="report-heading">
+          <span class="heading-icon" data-icon="radar"></span>
+          <h3>反派维度解析</h3>
+        </div>
+        <div id="resultRadar" class="radar-chart"></div>
+        <div id="resultDimensions" class="dimension-list"></div>
+        <div id="resultDimensionSummary" class="dimension-summary"></div>
+      </section>
+
+      <div id="resultSections"></div>
+
+      <section class="report-block">
+        <div class="report-heading">
+          <span class="heading-icon" data-icon="mirror"></span>
+          <h3>相似反派</h3>
+        </div>
+        <div id="resultSimilar" class="similar-list"></div>
+      </section>
+
+      <section class="hidden-line">
+        <span>隐藏台词</span>
+        <p id="resultHiddenLine"></p>
+      </section>
+
+      <div class="result-actions">
+        <button id="rebateBtn" class="result-action-btn">红包返现</button>
+        <button id="shareBtn" class="result-action-btn primary">截图保存</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="rebateModal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel rebate-panel">
+      <button id="closeRebateBtn" class="modal-close" type="button">×</button>
+
+      <div class="rebate-head">
+        <div class="rebate-kicker">REBATE GUIDE</div>
+        <h3>红包返现规则</h3>
+      </div>
+
+      <div class="rebate-list">
+        <div class="rebate-item">
+          <span>1</span>
+          <p>确认收货后，五星好评附上 2-3 张测试结果截图，并写下 15 字以上真实评价。</p>
+        </div>
+
+        <div class="rebate-item">
+          <span>2</span>
+          <p>好评截图发给店铺客服，审核通过后，即可获得 2 元红包返现。</p>
+        </div>
+
+        <div class="rebate-item">
+          <span>3</span>
+          <p>每购买一个测试产品，可参与一次返现活动。</p>
+        </div>
+
+        <div class="rebate-item">
+          <span>4</span>
+          <p>截图时不要截取本规则弹窗内容，匿名评价或无关截图无法参与返现活动。</p>
+        </div>
+      </div>
+
+      <div class="rebate-note">
+        客服看到后会第一时间处理，请不要一直催。<br />
+        客服在线时间：9:00-23:00
+      </div>
+    </div>
+  </div>
+
+  <div id="shareModal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel share-panel">
+      <button id="closeShareBtn" class="modal-close" type="button">×</button>
+      <img id="sharePreview" class="modal-image share-preview" alt="结果长图" />
+      <div class="share-tip">长按图片保存到相册</div>
+    </div>
+  </div>
+
+  <div id="archiveModal" class="modal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-panel archive-panel">
+      <button id="closeArchiveBtn" class="modal-close" type="button">×</button>
+
+      <div class="archive-head">
+        <div class="rebate-kicker">VILLAIN ARCHIVE</div>
+        <h3>反派人物图鉴</h3>
+      </div>
+
+      <div id="archiveList" class="archive-list"></div>
+    </div>
+  </div>
+
+  <script src="tests/definitions.js"></script>
+  <script src="tests/registry.js"></script>
+  <script src="tests/villain/manifest.js"></script>
+  <script src="data/questions.js"></script>
+  <script src="data/personalities/homelander.js"></script>
+  <script src="data/personalities/joker.js"></script>
+  <script src="data/personalities/anton.js"></script>
+  <script src="data/personalities/gollum.js"></script>
+  <script src="data/personalities/plankton.js"></script>
+  <script src="data/personalities/makima.js"></script>
+  <script src="data/personalities/tbag.js"></script>
+  <script src="data/personalities/hannibal.js"></script>
+  <script src="data/personalities/pain.js"></script>
+  <script src="data/personalities/light.js"></script>
+  <script src="data/personalities/harley.js"></script>
+  <script src="data/personalities/miranda.js"></script>
+  <script src="data/results.js"></script>
+  <script src="js/platform/product-contract.js"></script>
+  <script src="js/platform/product-registry.js"></script>
+  <script src="tests/villain/product.js"></script>
+  <script src="js/platform/runtime.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
