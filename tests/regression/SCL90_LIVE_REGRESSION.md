@@ -11,6 +11,7 @@ Create a temporary environment file outside every project and Git directory with
 ```text
 SUPABASE_URL=<production project URL>
 SUPABASE_SERVICE_ROLE_KEY=<production service role key>
+ADMIN_SECRET=<existing Production admin secret>
 ```
 
 Do not paste either value into chat, logs, source control, screenshots or the
@@ -30,7 +31,7 @@ read and write the real Supabase row.
 
 ## Required verification
 
-1. Open `/admin.html`; select SCL-90 and generate exactly one Token.
+1. Open `/admin.html`, sign in with the existing Admin secret, select SCL-90 and generate exactly one Token.
 2. Complete all 90 questions. Refresh once before completion and confirm the
    Token-scoped session draft restores.
 3. Confirm the report renders, then close and reopen the same Token link twice.

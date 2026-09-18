@@ -1,14 +1,9 @@
 import testDefinitions from "../tests/definitions.js";
+import { randomBytes } from "node:crypto";
+import { requireAdmin } from "../lib/server/admin-auth.js";
 
 function createToken(length = 32) {
-  const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let token = "";
-
-  for (let i = 0; i < length; i++) {
-    token += chars[Math.floor(Math.random() * chars.length)];
-  }
-
-  return token;
+  return randomBytes(Math.ceil(length * 0.75)).toString("base64url").slice(0, length);
 }
 
 export default async function handler(req, res) {
@@ -16,7 +11,9 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Only POST allowed" });
   }
 
-  const { count = 10, testId } = req.body;
+  if (!requireAdmin(req, res)) return;
+
+  const { count = 10, testId } = req.body || {};
 
   const requestTestId = testId ?? "villain";
   const testDefinition = typeof requestTestId === "string"
@@ -31,7 +28,12 @@ export default async function handler(req, res) {
     return res.status(403).json({ error: "该测试当前已关闭。" });
   }
 
-  const safeCount = Math.min(Number(count), 1000);
+  const requestedCount = Number(count);
+  if (!Number.isInteger(requestedCount) || requestedCount < 1) {
+    return res.status(400).json({ error: "生成数量必须是 1 到 1000 的整数。" });
+  }
+
+  const safeCount = Math.min(requestedCount, 1000);
 
   const rows = Array.from({ length: safeCount }, () => ({
     token: createToken(),
@@ -54,8 +56,8 @@ export default async function handler(req, res) {
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
-    return res.status(500).json({ error: errorText });
+    console.error("Supabase link creation failed:", response.status);
+    return res.status(500).json({ error: "链接生成失败，请稍后重试。" });
   }
 
   const data = await response.json();

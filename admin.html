@@ -3,56 +3,189 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>链接生成器</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>FilmTest 管理后台</title>
+  <link rel="stylesheet" href="css/admin.css" />
 </head>
 <body>
-  <main class="app">
-    <section class="screen active">
-      <h1>链接生成器</h1>
-      <p class="subtitle">批量生成一次性测试链接</p>
+  <div id="loginView" class="login-view">
+    <div class="login-panel">
+      <div class="brand-mark" aria-hidden="true"><span>F</span></div>
+      <p class="eyebrow">FILMTEST CONSOLE</p>
+      <h1>管理后台</h1>
+      <p class="login-copy">登录后管理测试产品、一次性链接和公共授权通道。</p>
+      <form id="loginForm" class="login-form">
+        <label for="adminSecretInput">管理员密码</label>
+        <div class="password-field">
+          <input id="adminSecretInput" type="password" autocomplete="current-password" placeholder="请输入管理员密码" required />
+          <button id="togglePasswordBtn" type="button" class="text-button" aria-label="显示或隐藏密码">显示</button>
+        </div>
+        <button id="loginBtn" type="submit" class="primary-button full-button">登录后台</button>
+        <p id="loginStatus" class="form-message" role="status"></p>
+      </form>
+      <p class="login-footnote">后台会话会在 8 小时后自动失效。</p>
+    </div>
+  </div>
 
-      <label for="testSelect">选择测试</label>
-      <select id="testSelect" class="admin-input" disabled>
-        <option value="">正在加载测试...</option>
-      </select>
+  <div id="adminShell" class="admin-shell" hidden>
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-mark small" aria-hidden="true"><span>F</span></div>
+        <div><strong>FilmTest</strong><small>测试管理平台</small></div>
+      </div>
 
-      <label for="countInput">生成数量</label>
-      <input id="countInput" class="admin-input" type="number" value="10" min="1" max="1000" />
+      <nav class="sidebar-nav" aria-label="后台主导航">
+        <button class="nav-item active" data-view="tests" type="button"><span class="nav-icon">▦</span><span>测试管理</span></button>
+        <button class="nav-item" data-view="generate" type="button"><span class="nav-icon">＋</span><span>生成链接</span></button>
+        <button class="nav-item" data-view="links" type="button"><span class="nav-icon">↗</span><span>链接管理</span></button>
+        <button class="nav-item" data-view="public-access" type="button"><span class="nav-icon">◇</span><span>公共授权管理</span></button>
+      </nav>
 
-      <button id="generateBtn" class="btn red" disabled>生成链接</button>
-      <button id="copyBtn" class="btn light">复制全部</button>
+      <div class="sidebar-footer">
+        <span class="environment-dot"></span>
+        <div><strong>Production</strong><small>filmtest.top</small></div>
+      </div>
+    </aside>
 
-      <p id="statusText" class="subtitle"></p>
+    <button id="sidebarBackdrop" class="sidebar-backdrop" type="button" aria-label="关闭导航"></button>
 
-      <textarea id="linksOutput" class="links-output" readonly></textarea>
+    <div class="admin-main">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button id="menuBtn" class="icon-button menu-button" type="button" aria-label="打开导航">☰</button>
+          <div class="breadcrumb"><span>后台</span><b>/</b><strong id="breadcrumbTitle">测试管理</strong></div>
+        </div>
+        <div class="topbar-actions">
+          <span class="secure-badge"><span>●</span> 安全会话</span>
+          <button id="logoutBtn" class="secondary-button compact" type="button">退出登录</button>
+        </div>
+      </header>
 
-      <hr />
+      <main class="content-area">
+        <section id="view-tests" class="admin-view active" data-title="测试管理">
+          <div class="page-heading">
+            <div><p class="eyebrow">PRODUCT REGISTRY</p><h1>测试管理</h1><p>查看当前平台注册的测试产品与运行状态。</p></div>
+            <button id="refreshTestsBtn" class="secondary-button" type="button">↻ 刷新列表</button>
+          </div>
 
-      <h2>公共授权通道</h2>
-      <p class="subtitle">固定授权码，不限人数，不限次数，可随时开启或关闭</p>
+          <div class="notice-card">
+            <span class="notice-icon">i</span>
+            <div><strong>测试状态由代码定义并随部署生效</strong><p>V1 暂不提供在线启停开关，避免后台状态与正式 Registry 漂移。</p></div>
+          </div>
 
-      <input
-        id="adminSecretInput"
-        class="admin-input"
-        type="password"
-        placeholder="请输入管理员密码"
-      />
+          <div id="testStats" class="stats-grid"></div>
+          <div id="testCards" class="product-grid" aria-live="polite"></div>
+          <div id="testsEmpty" class="empty-state" hidden><span>▦</span><h2>暂无测试</h2><p>Registry 当前没有可展示的测试定义。</p></div>
+        </section>
 
-      <input
-        id="publicAccessCodeInput"
-        class="admin-input"
-        type="text"
-        placeholder="固定授权码"
-      />
+        <section id="view-generate" class="admin-view" data-title="生成链接">
+          <div class="page-heading"><div><p class="eyebrow">TOKEN DELIVERY</p><h1>生成链接</h1><p>按测试产品生成一次性专属测试链接。</p></div></div>
 
-      <button id="loadPublicAccessBtn" class="btn light">读取当前配置</button>
-      <button id="updatePublicAccessCodeBtn" class="btn light">修改授权码</button>
-      <button id="togglePublicAccessBtn" class="btn red">开启公共通道</button>
+          <div class="two-column-layout">
+            <article class="panel-card form-card">
+              <div class="card-heading"><span class="card-icon">＋</span><div><h2>生成配置</h2><p>每个链接只可完成一次测试。</p></div></div>
+              <div class="field-group">
+                <label for="testSelect">选择测试 <em>*</em></label>
+                <select id="testSelect" disabled><option value="">正在加载测试…</option></select>
+              </div>
+              <div class="field-group">
+                <label for="countInput">生成数量 <em>*</em></label>
+                <div class="stepper">
+                  <button id="decreaseCountBtn" type="button" aria-label="减少数量">−</button>
+                  <input id="countInput" type="number" value="10" min="1" max="1000" inputmode="numeric" />
+                  <button id="increaseCountBtn" type="button" aria-label="增加数量">＋</button>
+                </div>
+                <small>单次最多生成 1000 条。</small>
+              </div>
+              <button id="generateBtn" class="primary-button full-button" type="button" disabled>生成测试链接</button>
+              <p id="generateStatus" class="form-message" role="status"></p>
+            </article>
 
-      <p id="publicAccessStatusText" class="subtitle">当前状态：未读取</p>
-    </section>
-  </main>
+            <article class="panel-card guide-card">
+              <div class="card-heading"><span class="card-icon">i</span><div><h2>使用说明</h2><p>链接生成后即可安全交付给测试者。</p></div></div>
+              <ul class="guide-list">
+                <li><span>1</span><div><strong>产品绑定</strong><p>每条 Token 与所选测试绑定，跨产品访问会被拒绝。</p></div></li>
+                <li><span>2</span><div><strong>一次完成</strong><p>完成后再次打开原链接，将直接恢复历史报告。</p></div></li>
+                <li><span>3</span><div><strong>结果持久化</strong><p>报告结果由平台保存，无需测试者注册账号。</p></div></li>
+              </ul>
+            </article>
+          </div>
+
+          <article id="generationResults" class="panel-card results-card" hidden>
+            <div class="card-heading between"><div><h2>生成结果</h2><p id="resultSummary">已生成 0 条链接</p></div><button id="copyAllBtn" class="secondary-button" type="button">复制全部</button></div>
+            <div id="generatedLinksList" class="generated-list"></div>
+          </article>
+        </section>
+
+        <section id="view-links" class="admin-view" data-title="链接管理">
+          <div class="page-heading"><div><p class="eyebrow">LINK RECORDS</p><h1>链接管理</h1><p>查询已生成的一次性链接与完成状态。</p></div><button id="refreshLinksBtn" class="secondary-button" type="button">↻ 刷新</button></div>
+
+          <div class="stats-grid link-stats">
+            <article class="stat-card"><span class="stat-icon blue">▤</span><div><small>链接总数</small><strong id="totalLinksStat">—</strong></div></article>
+            <article class="stat-card"><span class="stat-icon purple">◇</span><div><small>未使用</small><strong id="unusedLinksStat">—</strong></div></article>
+            <article class="stat-card"><span class="stat-icon green">✓</span><div><small>已完成</small><strong id="completedLinksStat">—</strong></div></article>
+          </div>
+
+          <article class="panel-card table-card">
+            <form id="linkFiltersForm" class="filter-bar">
+              <div class="search-field"><span>⌕</span><input id="linkSearchInput" type="search" placeholder="搜索 Token 关键字" maxlength="64" /></div>
+              <select id="linkTestFilter"><option value="">全部测试</option></select>
+              <select id="linkStatusFilter"><option value="all">全部状态</option><option value="unused">未使用</option><option value="completed">已完成</option></select>
+              <button class="primary-button compact" type="submit">筛选</button>
+              <button id="resetLinkFiltersBtn" class="secondary-button compact" type="button">重置</button>
+            </form>
+
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Token / 链接</th><th>测试产品</th><th>状态</th><th>创建时间</th><th>结果类型</th><th>操作</th></tr></thead>
+                <tbody id="linksTableBody"></tbody>
+              </table>
+              <div id="linksLoading" class="table-state">正在读取链接记录…</div>
+              <div id="linksEmpty" class="table-state" hidden>没有符合条件的链接记录。</div>
+              <div id="linksError" class="table-state error" hidden></div>
+            </div>
+
+            <div class="pagination-bar">
+              <span id="paginationSummary">共 0 条</span>
+              <div><button id="previousPageBtn" class="page-button" type="button">‹</button><span id="currentPageLabel">1 / 1</span><button id="nextPageBtn" class="page-button" type="button">›</button></div>
+            </div>
+          </article>
+          <p class="section-footnote">V1 仅提供安全的查询与复制。当前数据库没有独立撤销字段，因此不会用“已使用”冒充“已撤销”。</p>
+        </section>
+
+        <section id="view-public-access" class="admin-view" data-title="公共授权管理">
+          <div class="page-heading"><div><p class="eyebrow">PUBLIC ACCESS</p><h1>公共授权管理</h1><p>管理全平台共用的固定公共授权码与通道状态。</p></div><button id="loadPublicAccessBtn" class="secondary-button" type="button">↻ 读取配置</button></div>
+
+          <div class="two-column-layout access-layout">
+            <article class="panel-card">
+              <div class="access-status-block">
+                <div><small>当前通道状态</small><div class="status-line"><span id="publicAccessDot" class="large-status-dot unknown"></span><strong id="publicAccessStatusLabel">尚未读取</strong></div></div>
+                <button id="togglePublicAccessBtn" class="primary-button" type="button" disabled>切换状态</button>
+              </div>
+              <div class="divider"></div>
+              <div class="field-group">
+                <label for="publicAccessCodeInput">固定公共授权码</label>
+                <div class="inline-control"><input id="publicAccessCodeInput" type="text" placeholder="读取后显示当前授权码" autocomplete="off" disabled /><button id="updatePublicAccessCodeBtn" class="secondary-button" type="button" disabled>保存新授权码</button></div>
+                <small>该授权码是全平台统一入口，不按测试产品区分。</small>
+              </div>
+              <p id="publicAccessStatusText" class="form-message" role="status"></p>
+            </article>
+
+            <article class="panel-card guide-card">
+              <div class="card-heading"><span class="card-icon">!</span><div><h2>使用边界</h2><p>公共授权与一次性 Token 是两套独立入口。</p></div></div>
+              <ul class="plain-list">
+                <li><strong>全局设置</strong><span>一个固定授权码服务当前平台入口。</span></li>
+                <li><strong>关闭语义</strong><span>关闭后新用户不能进入；已开始的当前轮仍可完成。</span></li>
+                <li><strong>产品入口</strong><span>授权成功后按入口携带的测试身份进入对应产品。</span></li>
+              </ul>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script src="tests/definitions.js"></script>
   <script src="tests/registry.js"></script>

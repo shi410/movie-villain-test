@@ -31,13 +31,16 @@ function parseEnv(source) {
 }
 
 const secrets = parseEnv(await readFile(envFile, "utf8"));
-for (const key of ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY"]) {
+for (const key of ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "ADMIN_SECRET"]) {
   if (!secrets[key]) throw new Error(`Live Runtime environment is missing ${key}.`);
   process.env[key] = secrets[key];
 }
 
 const handlers = {
+  "/api/admin-session": (await import("../../api/admin-session.js")).default,
   "/api/generate-links": (await import("../../api/generate-links.js")).default,
+  "/api/manage-links": (await import("../../api/manage-links.js")).default,
+  "/api/manage-public-access": (await import("../../api/manage-public-access.js")).default,
   "/api/validate-token": (await import("../../api/validate-token.js")).default,
   "/api/use-token": (await import("../../api/use-token.js")).default,
   "/api/validate-access-code": (await import("../../api/validate-access-code.js")).default
@@ -51,10 +54,11 @@ const state = {
   lastCompletedTestId: null
 };
 
-function sendJson(response, status, body) {
+function sendJson(response, status, body, extraHeaders = {}) {
   response.writeHead(status, {
     "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store"
+    "Cache-Control": "no-store",
+    ...extraHeaders
   });
   response.end(JSON.stringify(body));
 }
@@ -70,12 +74,14 @@ async function runHandler(handler, request, response, url) {
   const query = Object.fromEntries(url.searchParams.entries());
   let statusCode = 200;
   let responseBody;
+  const responseHeaders = {};
   const adapter = {
     status(code) { statusCode = code; return this; },
-    json(value) { responseBody = value; return this; }
+    json(value) { responseBody = value; return this; },
+    setHeader(name, value) { responseHeaders[name] = value; }
   };
 
-  await handler({ method: request.method, body, query }, adapter);
+  await handler({ method: request.method, body, query, headers: request.headers }, adapter);
 
   if (url.pathname === "/api/generate-links" && statusCode === 200) {
     state.generated += responseBody.count;
@@ -100,7 +106,7 @@ async function runHandler(handler, request, response, url) {
     }
   }
 
-  sendJson(response, statusCode, responseBody);
+  sendJson(response, statusCode, responseBody, responseHeaders);
 }
 
 const contentTypes = {

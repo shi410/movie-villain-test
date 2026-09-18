@@ -1,3 +1,5 @@
+import { requireAdmin } from "../lib/server/admin-auth.js";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({
@@ -6,26 +8,13 @@ export default async function handler(req, res) {
     });
   }
 
+  if (!requireAdmin(req, res)) return;
+
   const {
-    adminSecret,
     action,
     accessCode,
     enabled
-  } = req.body;
-
-  if (!adminSecret) {
-    return res.status(401).json({
-      success: false,
-      message: "请输入管理员密码"
-    });
-  }
-
-  if (adminSecret !== process.env.ADMIN_SECRET) {
-    return res.status(403).json({
-      success: false,
-      message: "管理员密码错误"
-    });
-  }
+  } = req.body || {};
 
   try {
     if (action === "get") {
@@ -40,9 +29,7 @@ export default async function handler(req, res) {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-
-        console.error("Supabase query failed:", errorText);
+        console.error("Supabase query failed:", response.status);
 
         return res.status(500).json({
           success: false,
@@ -93,9 +80,7 @@ export default async function handler(req, res) {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-
-        console.error("Supabase update code failed:", errorText);
+        console.error("Supabase update code failed:", response.status);
 
         return res.status(500).json({
           success: false,
@@ -145,9 +130,7 @@ export default async function handler(req, res) {
       );
 
       if (!response.ok) {
-        const errorText = await response.text();
-
-        console.error("Supabase update status failed:", errorText);
+        console.error("Supabase update status failed:", response.status);
 
         return res.status(500).json({
           success: false,
@@ -177,7 +160,7 @@ export default async function handler(req, res) {
       message: "未知操作"
     });
   } catch (error) {
-    console.error("Manage public access error:", error);
+    console.error("Manage public access error:", error?.message || error?.name || "unknown error");
 
     return res.status(500).json({
       success: false,

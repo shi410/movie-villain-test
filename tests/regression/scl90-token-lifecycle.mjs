@@ -9,12 +9,14 @@ const product = require("../scl90/product.js");
 const generateLinks = (await import(pathToFileURL(resolve(root, "api/generate-links.js")).href)).default;
 const validateToken = (await import(pathToFileURL(resolve(root, "api/validate-token.js")).href)).default;
 const useToken = (await import(pathToFileURL(resolve(root, "api/use-token.js")).href)).default;
+const { createAdminSessionToken, adminSessionConfig } = await import(pathToFileURL(resolve(root, "lib/server/admin-auth.js")).href);
 
 const rows = [];
 let successfulPatches = 0;
 const savedFetch = globalThis.fetch;
 const savedUrl = process.env.SUPABASE_URL;
 const savedKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const savedAdminSecret = process.env.ADMIN_SECRET;
 
 function response() {
   return {
@@ -47,6 +49,7 @@ function matchingToken(url) {
 try {
   process.env.SUPABASE_URL = "https://supabase.invalid";
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-only";
+  process.env.ADMIN_SECRET = "token-lifecycle-test-secret";
   globalThis.fetch = async (url, options = {}) => {
     const parsed = new URL(url);
     const token = matchingToken(url);
@@ -75,7 +78,15 @@ try {
   };
 
   let res = response();
-  await generateLinks({ method: "POST", body: { count: 1, testId: "scl90" } }, res);
+  const sessionToken = createAdminSessionToken();
+  await generateLinks({
+    method: "POST",
+    headers: {
+      "x-admin-request": "1",
+      cookie: `${adminSessionConfig.cookieName}=${encodeURIComponent(sessionToken)}`
+    },
+    body: { count: 1, testId: "scl90" }
+  }, res);
   assert.equal(res.statusCode, 200);
   assert.equal(res.body.count, 1);
   assert.equal(new URL(res.body.links[0]).pathname, "/scl90/");
@@ -150,4 +161,6 @@ try {
   else process.env.SUPABASE_URL = savedUrl;
   if (savedKey === undefined) delete process.env.SUPABASE_SERVICE_ROLE_KEY;
   else process.env.SUPABASE_SERVICE_ROLE_KEY = savedKey;
+  if (savedAdminSecret === undefined) delete process.env.ADMIN_SECRET;
+  else process.env.ADMIN_SECRET = savedAdminSecret;
 }

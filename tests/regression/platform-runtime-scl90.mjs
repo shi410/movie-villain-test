@@ -203,7 +203,9 @@ await test("public session result storage round-trips the opaque payload", () =>
 
 await test("enabled scl90 generates a Token bound to its entry path", async () => {
   const handler = (await import(pathToFileURL(resolve(root, "api/generate-links.js")).href)).default;
+  const { createAdminSessionToken, adminSessionConfig } = await import(pathToFileURL(resolve(root, "lib/server/admin-auth.js")).href);
   const savedFetch = globalThis.fetch;
+  const savedAdminSecret = process.env.ADMIN_SECRET;
   let insertedRows = null;
   const res = {
     statusCode: null,
@@ -212,6 +214,7 @@ await test("enabled scl90 generates a Token bound to its entry path", async () =
     json(body) { this.body = body; return this; }
   };
   try {
+    process.env.ADMIN_SECRET = "platform-runtime-test-secret";
     globalThis.fetch = async (url, options) => {
       insertedRows = JSON.parse(options.body);
       return {
@@ -219,7 +222,15 @@ await test("enabled scl90 generates a Token bound to its entry path", async () =
         async json() { return insertedRows; }
       };
     };
-    await handler({ method: "POST", body: { count: 1, testId: "scl90" } }, res);
+    const sessionToken = createAdminSessionToken();
+    await handler({
+      method: "POST",
+      headers: {
+        "x-admin-request": "1",
+        cookie: `${adminSessionConfig.cookieName}=${encodeURIComponent(sessionToken)}`
+      },
+      body: { count: 1, testId: "scl90" }
+    }, res);
     assert.equal(res.statusCode, 200);
     assert.deepEqual(insertedRows.map(row => ({ used: row.used, test_id: row.test_id })), [
       { used: false, test_id: "scl90" }
@@ -228,6 +239,8 @@ await test("enabled scl90 generates a Token bound to its entry path", async () =
     assert.match(res.body.links[0], /^https:\/\/filmtest\.top\/scl90\/\?token=/);
   } finally {
     globalThis.fetch = savedFetch;
+    if (savedAdminSecret === undefined) delete process.env.ADMIN_SECRET;
+    else process.env.ADMIN_SECRET = savedAdminSecret;
   }
 });
 
